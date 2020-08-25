@@ -25,11 +25,12 @@ AMainCharacter::AMainCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-85.0f, 0.0f, 0.0f));
-	SpringArm->TargetArmLength = 400.f;
+	SpringArm->TargetArmLength = 500.f;
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->CameraLagSpeed = 3.0f;
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("GameCamera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->bUsePawnControlRotation = false;
 	
 	Mesh->SetupAttachment(RootComponent);
 
@@ -47,12 +48,12 @@ void AMainCharacter::BeginPlay()
 
 void AMainCharacter::MoveForward(float AxisValue)
 {
-	MovementInput.X = FMath::Clamp<float>(AxisValue, -1.0f, 1.0f);
+	MovementInput.X = FMath::Clamp<float>(AxisValue, -1.0f, 3.0f);
 }
 
 void AMainCharacter::MoveRight(float AxisValue)
 {
-	MovementInput.Y = FMath::Clamp<float>(AxisValue, -1.0f, 1.0f);
+	MovementInput.Y = FMath::Clamp<float>(AxisValue, -1.0f, 3.0f);
 }
 
 void AMainCharacter::PitchCamera(float AxisValue)
@@ -91,15 +92,16 @@ void AMainCharacter::Tick(float DeltaTime)
 	ZoomFactor = FMath::Clamp<float>(ZoomFactor, 0.0f, 1.0f);
 	//Blend our camera's FOV and our SpringArm's length based on ZoomFactor
 	Camera->FieldOfView = FMath::Lerp<float>(90.0f, 60.0f, ZoomFactor);
-	SpringArm->TargetArmLength = FMath::Lerp<float>(400.0f, 300.0f, ZoomFactor);
+	SpringArm->TargetArmLength = FMath::Lerp<float>(600.0f, 400.0f, ZoomFactor);
+	
 
-
+	//this sequence will make sure
+	//The camera won't rotate with the pawn :D 
 	FRotator NewYaw = GetActorRotation();
-	NewYaw.Yaw += CameraInput.X;
-	SetActorRotation(NewYaw);
-
 	FRotator NewPitch = SpringArm->GetComponentRotation();
-	NewPitch.Pitch = FMath::Clamp<float>(NewPitch.Pitch + CameraInput.Y, -80.0f, -15.0f);
+	NewYaw.Yaw += CameraInput.X;
+	NewPitch.Pitch = FMath::Clamp<float>(NewPitch.Pitch + CameraInput.Y, -100.0f, -85.0f);
+	SetActorRotation(NewYaw);
 	SpringArm->SetWorldRotation(NewPitch);
 
 	if (!MovementInput.IsZero())

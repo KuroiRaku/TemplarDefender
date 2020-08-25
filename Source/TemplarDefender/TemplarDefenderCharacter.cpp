@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Engine.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // ATemplarDefenderCharacter
@@ -17,17 +19,14 @@ ATemplarDefenderCharacter::ATemplarDefenderCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
 
-	// Don't rotate when the controller rotates. Let that just affect the camera.
+	
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
@@ -35,9 +34,12 @@ ATemplarDefenderCharacter::ATemplarDefenderCharacter()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->AttachTo(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-	CameraBoom->SetWorldRotation(FRotator(-85.f, 0.f, 0.f));
+	CameraBoom->TargetArmLength = 500.0f; // The camera follows at this distance behind the character	
+	CameraBoom->bUsePawnControlRotation = false; // Rotate the arm based on the controller
+	CameraBoom->bInheritPitch = false;
+	CameraBoom->bInheritRoll = false;
+	CameraBoom->bInheritYaw = false;
+	CameraBoom->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-85.0f, 0.0f, 0.0f));
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -46,6 +48,7 @@ ATemplarDefenderCharacter::ATemplarDefenderCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,47 +65,61 @@ void ATemplarDefenderCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAxis("MoveRight", this, &ATemplarDefenderCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ATemplarDefenderCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ATemplarDefenderCharacter::LookUpAtRate);
+	// "MousePitch" handles devices that provide an absolute delta, such as a mouse.
+	
+	PlayerInputComponent->BindAxis("MousePitch", this, &ATemplarDefenderCharacter::PitchCamera);
+	
+	PlayerInputComponent->BindAxis("MouseYaw", this, &ATemplarDefenderCharacter::YawCamera);
+	
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &ATemplarDefenderCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &ATemplarDefenderCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ATemplarDefenderCharacter::OnResetVR);
+	//Hook up events for "ZoomIn"
+	InputComponent->BindAction("ZoomIn", IE_Pressed, this, &ATemplarDefenderCharacter::ZoomIn);
+	InputComponent->BindAction("ZoomIn", IE_Released, this, &ATemplarDefenderCharacter::ZoomOut);
+	
 }
 
-
-void ATemplarDefenderCharacter::OnResetVR()
+void ATemplarDefenderCharacter::Tick(float DeltaTime)
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	Super::Tick(DeltaTime);
+
+	if (bZoomingIn)
+	{
+		ZoomFactor += DeltaTime / 0.5f;         //Zoom in over half a second
+	}
+	else
+	{
+		ZoomFactor -= DeltaTime / 0.25f;        //Zoom out over a quarter of a second
+	}
+	ZoomFactor = FMath::Clamp<float>(ZoomFactor, 0.0f, 1.0f);
+	//Blend our camera's FOV and our SpringArm's length based on ZoomFactor
+	FollowCamera->FieldOfView = FMath::Lerp<float>(90.0f, 60.0f, ZoomFactor);
+	CameraBoom->TargetArmLength = FMath::Lerp<float>(600.0f, 400.0f, ZoomFactor);
+
+
+	FRotator NewYaw = GetActorRotation();
+	NewYaw.Yaw += CameraInput.X;
+	SetActorRotation(NewYaw);
+//
+//	FRotator NewPitch = CameraBoom->GetComponentRotation();
+//	//we should discuss whether we should make player able to look at character closer :p
+////	NewPitch.Pitch = FMath::Clamp<float>(NewPitch.Pitch + CameraInput.Y, -90.0f, -90.0f);
+//	CameraBoom->SetWorldRotation(NewPitch);
+//
+//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%.5d", GetActorRotation())));
 }
 
-void ATemplarDefenderCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
+void ATemplarDefenderCharacter::CalculateDead()
 {
-		Jump();
+	if (Health <= 0)
+		IsDead = true;
+	else
+		IsDead = false;
 }
 
-void ATemplarDefenderCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
+void ATemplarDefenderCharacter::CalculateHealth(float Delta)
 {
-		StopJumping();
-}
-
-void ATemplarDefenderCharacter::TurnAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ATemplarDefenderCharacter::LookUpAtRate(float Rate)
-{
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	Health += Delta;
+	CalculateDead();
 }
 
 void ATemplarDefenderCharacter::MoveForward(float Value)
@@ -132,4 +149,24 @@ void ATemplarDefenderCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void ATemplarDefenderCharacter::PitchCamera(float AxisValue)
+{
+	CameraInput.Y = AxisValue;
+}
+
+void ATemplarDefenderCharacter::YawCamera(float AxisValue)
+{
+	CameraInput.X = AxisValue;
+}
+
+void ATemplarDefenderCharacter::ZoomIn()
+{
+	bZoomingIn = true;
+}
+
+void ATemplarDefenderCharacter::ZoomOut()
+{
+	bZoomingIn = false;
 }

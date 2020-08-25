@@ -29,10 +29,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	float Health = 100;
+	bool IsDead = false;
+
+	void CalculateDead();
+	void CalculateHealth(float Delta);
+
 protected:
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
+	//Input variables
+	FVector2D MovementInput;
+	FVector2D CameraInput;
+	float ZoomFactor;
+	bool bZoomingIn;
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -40,23 +52,14 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-	/** 
-	 * Called via input to turn at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void TurnAtRate(float Rate);
 
-	/**
-	 * Called via input to turn look up/down at a given rate. 
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
-	void LookUpAtRate(float Rate);
+	void PitchCamera(float AxisValue);
+	void YawCamera(float AxisValue);
+	void ZoomIn();
+	void ZoomOut();
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
+	
 
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
 protected:
 	// APawn interface
