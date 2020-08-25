@@ -2,12 +2,11 @@
 
 #include "TemplarDefenderGameMode.h"
 #include "TemplarDefenderCharacter.h"
-#include "MainCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ATemplarDefenderGameMode::ATemplarDefenderGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	DefaultPawnClass = AMainCharacter::StaticClass();
+	DefaultPawnClass = ATemplarDefenderCharacter::StaticClass();
 	
 }
