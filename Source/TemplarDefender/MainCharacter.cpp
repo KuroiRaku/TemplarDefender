@@ -12,7 +12,7 @@
 #include "Engine.h"
 
 AMainCharacter::AMainCharacter()
-	:Super()
+
 {
 	//Super::ABaseCharacter();
 	// Set size for collision capsule
@@ -105,7 +105,7 @@ void AMainCharacter::MoveForward(float Value)
 		//running movement speed
 		if (IsRunning)
 		{
-			Value *= Speed;
+			
 		}
 		AddMovementInput(Direction, Value);
 	}
@@ -127,7 +127,7 @@ void AMainCharacter::MoveRight(float Value)
 		// add movement in that direction
 		if (IsRunning)
 		{
-			Value *= Speed;
+			
 		}
 		AddMovementInput(Direction, Value);
 	}
