@@ -103,15 +103,13 @@ void AMainCharacter::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
 		//running movement speed
+		//THIS PART IS RUINING THE ROTATION! 
 		if (IsRunning)
 		{
 			
 		}
 		AddMovementInput(Direction, Value);
 	}
-
-	
-
 }
 
 void AMainCharacter::MoveRight(float Value)
