@@ -38,7 +38,7 @@ AMainCharacter::AMainCharacter()
 	CameraBoom->bInheritPitch = false;
 	CameraBoom->bInheritRoll = false;
 	CameraBoom->bInheritYaw = false;
-	CameraBoom->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-85.0f, 0.0f, 0.0f));
+	CameraBoom->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-5.0f, 0.0f, 0.0f));
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -140,7 +140,6 @@ void AMainCharacter::Run()
 {
 	IsRunning = true;
 	this->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-}
 }
 
 void AMainCharacter::StopRunning()
