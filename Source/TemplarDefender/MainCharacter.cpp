@@ -18,14 +18,14 @@ AMainCharacter::AMainCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	
+	GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
@@ -33,7 +33,7 @@ AMainCharacter::AMainCharacter()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->AttachTo(RootComponent);
-	CameraBoom->TargetArmLength = 500.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 500.0f; // The camera follows at this distance behind the character
 	CameraBoom->bUsePawnControlRotation = false; // Rotate the arm based on the controller
 	CameraBoom->bInheritPitch = false;
 	CameraBoom->bInheritRoll = false;
@@ -45,16 +45,25 @@ AMainCharacter::AMainCharacter()
 	FollowCamera->AttachTo(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	
+	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
+
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void AMainCharacter::Tick(float DeltaTime)
-	
+
 {
 	Super::Tick(DeltaTime);
 
+	if (IsRunning)
+	{
+
+
+	}
+	else {
+
+
+	}
 
 	//Switch Characters?
 	if (IsDead)
@@ -95,6 +104,7 @@ void AMainCharacter::MoveForward(float Value)
 	//normal movement speed
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		Speed = Value;
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -103,12 +113,10 @@ void AMainCharacter::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
 		//running movement speed
-		//THIS PART IS RUINING THE ROTATION! 
-		if (IsRunning)
-		{
-			
-		}
-		AddMovementInput(Direction, Value);
+		//THIS PART IS RUINING THE ROTATION!
+
+
+		AddMovementInput(Direction, Speed);
 	}
 }
 
@@ -120,13 +128,10 @@ void AMainCharacter::MoveRight(float Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get right vector 
+		// get right vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-		if (IsRunning)
-		{
-			
-		}
+
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -134,6 +139,14 @@ void AMainCharacter::MoveRight(float Value)
 void AMainCharacter::Run()
 {
 	IsRunning = true;
+	this->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+}
+}
+
+void AMainCharacter::StopRunning()
+{
+	IsRunning = false;
+	this->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 }
 
 void AMainCharacter::Attack()
@@ -172,7 +185,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AMainCharacter::Run);
-	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::StopRunning);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::Attack);
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);

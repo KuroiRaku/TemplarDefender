@@ -54,7 +54,11 @@ public:
 	void MoveRight(float Value);
 
 	void Run();
+
+	void StopRunning();
+
 	void Attack();
+
 
 	void PitchCamera(float AxisValue);
 	void YawCamera(float AxisValue);
