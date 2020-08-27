@@ -24,8 +24,12 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 public:
 	AMainCharacter();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "ZZZ")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable ,Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
 	void OnAttack();
+
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "UpdateAnimatorEvent"))
+	void UpdateAnimator();
 
 
 	// Called every frame

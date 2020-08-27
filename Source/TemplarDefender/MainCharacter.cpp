@@ -18,7 +18,7 @@ AMainCharacter::AMainCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	GetCharacterMovement()->MaxWalkSpeed = 100.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -64,12 +64,14 @@ void AMainCharacter::Tick(float DeltaTime)
 
 
 	}
-
+	//UpdateAnimator();
 	//Switch Characters?
 	if (IsDead)
 	{
-
+		UpdateAnimator();
 	}
+
+
 
 	if (bZoomingIn)
 	{
@@ -140,13 +142,13 @@ void AMainCharacter::MoveRight(float Value)
 void AMainCharacter::Run()
 {
 	IsRunning = true;
-	this->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+	this->GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 }
 
 void AMainCharacter::StopRunning()
 {
 	IsRunning = false;
-	this->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
+	this->GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 }
 
 /*void AMainCharacter::OnAttack() {
