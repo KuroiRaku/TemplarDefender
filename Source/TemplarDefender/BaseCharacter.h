@@ -18,8 +18,9 @@ public:
 	float Health = 100;
 	bool IsDead = false;
 
-	virtual void CalculateDead();
-	virtual void CalculateHealth(float Delta);
+	virtual void CheckIfDead();
+	virtual void AddHealth(float Delta);
+	virtual void OnDeath();
 
 protected:
 	// Called when the game starts or when spawned

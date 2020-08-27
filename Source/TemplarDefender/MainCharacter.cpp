@@ -87,7 +87,7 @@ void AMainCharacter::Tick(float DeltaTime)
 
 	FRotator NewYaw = GetActorRotation();
 	NewYaw.Yaw += CameraInput.X;
-	SetActorRotation(NewYaw);
+	//SetActorRotation(NewYaw);
 	//
 	//	FRotator NewPitch = CameraBoom->GetComponentRotation();
 	//	//we should discuss whether we should make player able to look at character closer :p
@@ -96,6 +96,7 @@ void AMainCharacter::Tick(float DeltaTime)
 	//
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%.5d", GetActorRotation())));
 }
+
 
 
 
@@ -148,9 +149,14 @@ void AMainCharacter::StopRunning()
 	this->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 }
 
+/*void AMainCharacter::OnAttack() {
+
+}*/
+
 void AMainCharacter::Attack()
 {
 	IsAttacking = true;
+	OnAttack();
 }
 
 void AMainCharacter::PitchCamera(float AxisValue)

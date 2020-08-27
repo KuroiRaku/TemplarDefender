@@ -24,6 +24,9 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 public:
 	AMainCharacter();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "ZZZ")
+	void OnAttack();
+
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
