@@ -16,10 +16,14 @@ public:
 	ABaseCharacter();
 
 	float Health = 100;
+	float Speed = 1.0f;
+	int Damage = 10;
 	bool IsDead = false;
+	bool IsAttacking = false;
 
-	virtual void CalculateDead();
-	virtual void CalculateHealth(float Delta);
+	virtual void CheckIfDead();
+	virtual void AddHealth(float Delta);
+	virtual void OnDeath();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,7 +33,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 
 };

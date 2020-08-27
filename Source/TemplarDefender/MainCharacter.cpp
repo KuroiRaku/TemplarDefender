@@ -14,11 +14,17 @@
 AMainCharacter::AMainCharacter()
 
 {
+
+	
 	//Super::ABaseCharacter();
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	GetCharacterMovement()->MaxWalkSpeed = 100.0f;
+	Speed = 1.0f;
+	Health = 200;
+	Damage = 50;
+
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -47,7 +53,7 @@ AMainCharacter::AMainCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void AMainCharacter::Tick(float DeltaTime)
@@ -64,12 +70,14 @@ void AMainCharacter::Tick(float DeltaTime)
 
 
 	}
-
+	//UpdateAnimator();
 	//Switch Characters?
 	if (IsDead)
 	{
-
+		UpdateAnimator();
 	}
+
+
 
 	if (bZoomingIn)
 	{
@@ -87,7 +95,9 @@ void AMainCharacter::Tick(float DeltaTime)
 
 	FRotator NewYaw = GetActorRotation();
 	NewYaw.Yaw += CameraInput.X;
-	SetActorRotation(NewYaw);
+
+	//Trying to debug below O.O
+	//SetActorRotation(NewYaw);
 	//
 	//	FRotator NewPitch = CameraBoom->GetComponentRotation();
 	//	//we should discuss whether we should make player able to look at character closer :p
@@ -99,12 +109,13 @@ void AMainCharacter::Tick(float DeltaTime)
 
 
 
+
 void AMainCharacter::MoveForward(float Value)
 {
 	//normal movement speed
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-		Speed = Value;
+		
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -116,7 +127,7 @@ void AMainCharacter::MoveForward(float Value)
 		//THIS PART IS RUINING THE ROTATION!
 
 
-		AddMovementInput(Direction, Speed);
+		AddMovementInput(Direction, Value);
 	}
 }
 
@@ -139,18 +150,23 @@ void AMainCharacter::MoveRight(float Value)
 void AMainCharacter::Run()
 {
 	IsRunning = true;
-	this->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+	this->GetCharacterMovement()->MaxWalkSpeed = Speed * 600.0f;
 }
 
 void AMainCharacter::StopRunning()
 {
 	IsRunning = false;
-	this->GetCharacterMovement()->MaxWalkSpeed = 100.0f;
+	this->GetCharacterMovement()->MaxWalkSpeed = Speed * 300.0f;
 }
+
+/*void AMainCharacter::OnAttack() {
+
+}*/
 
 void AMainCharacter::Attack()
 {
 	IsAttacking = true;
+	OnAttack();
 }
 
 void AMainCharacter::PitchCamera(float AxisValue)
