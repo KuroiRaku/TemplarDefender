@@ -26,6 +26,7 @@ public:
 	virtual void CheckIfDead();
 	virtual void AddHealth(float Delta);
 	virtual void OnDeath();
+	
 
 protected:
 	// Called when the game starts or when spawned

@@ -34,6 +34,8 @@ void ABaseCharacter::OnDeath()
 	//idk lol
 }
 
+
+
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {

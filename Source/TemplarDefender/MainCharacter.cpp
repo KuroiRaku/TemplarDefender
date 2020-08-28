@@ -9,7 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Character.h"
 #include "Engine.h"
+#include "PaperSpriteComponent.h"
 
 AMainCharacter::AMainCharacter()
 
@@ -20,8 +22,11 @@ AMainCharacter::AMainCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
+	
+
+
 	//Character Switching Variables
-	characterId = 1;//0 = Demon, 1 = Knight, 2 = Angel
+	CharacterID = 1;//0 = Demon, 1 = Knight, 2 = Angel
 
 	Speed = 1.0f;
 	Health = 200;
@@ -38,6 +43,28 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	//Create the character Sprite
+	Knight = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Knight"));
+	Knight->SetWorldScale3D(FVector(5,5,5));
+	Knight->SetRelativeScale3D(FVector(5, 5, 5));
+	Knight->SetupAttachment(RootComponent);
+	Knight->SetVisibility(true);
+
+	Angel = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Angel"));
+	Angel->SetupAttachment(RootComponent);
+	Angel->SetWorldScale3D(FVector(3, 3, 3));
+	Angel->SetRelativeScale3D(FVector(3, 3, 3));
+	Angel->SetVisibility(false);
+
+	Demon= CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Demon"));
+	Demon->SetupAttachment(RootComponent);
+	Demon->SetWorldScale3D(FVector(3, 3, 3));
+	Demon->SetRelativeScale3D(FVector(3, 3, 3));
+	Demon->SetVisibility(false);
+
+	/*RootComponent->SetWorldScale3D(FVector(3, 3, 3));
+	RootComponent->SetRelativeScale3D(FVector(3, 3, 3));*/
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -112,27 +139,35 @@ void AMainCharacter::Tick(float DeltaTime)
 
 void AMainCharacter::OnDeath() {
 
-	characterId -= 1;
+	CharacterID -= 1;
 
-	if (characterId < 0)
-		characterId = 2;
+	//resets the CharacterID
+	if (CharacterID < 0)
+		CharacterID = 2;
 
 	SetCharacterStats();
 	Health = 100;
 }
 
 void AMainCharacter::SetCharacterStats() {
-	if (characterId == 0) {// Demon
+	if (CharacterID == 0) {// Demon
+		Knight->SetVisibility(false);
+		Demon->SetVisibility(true);
 		Health = 200;
 		Speed = 1.4f;
 		Damage = 100;
 	}
-	else if (characterId == 1) {// Knight
+	else if (CharacterID == 1) {// Knight
+		Angel->SetVisibility(false);
+		Knight->SetVisibility(true);
 		Health = 100;
 		Speed = 1.0f;
 		Damage = 10;
 	}
-	else if (characterId == 2) {// Angel
+	else if (CharacterID == 2) {// Angel
+		Demon->SetVisibility(false);
+		Angel->SetVisibility(true);
+
 		Health = 70;
 		Speed = 1.5f;
 		Damage = 7;
@@ -234,7 +269,13 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::StopRunning);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::Attack);
-	//PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);
+
+
+	//Debug Switch
+	PlayerInputComponent->BindAction("Switch", IE_Pressed, this, &AMainCharacter::OnDeath);
+	
+
 
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);

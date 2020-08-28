@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+//#include "PaperSpriteComponent.h"
 #include "MainCharacter.generated.h"
+
 
 
 /**
@@ -22,6 +24,16 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperSpriteComponent* Angel;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperSpriteComponent* Knight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperSpriteComponent* Demon;
+
+
 
 public:
 	AMainCharacter();
@@ -38,7 +50,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	int characterId;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ZZZ", meta = (DisplayName = "CharacterID"))
+	int CharacterID;
 
 	bool IsDead = false;
 	bool IsRunning = false;
