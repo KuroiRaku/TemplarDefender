@@ -21,28 +21,18 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
-
-	
 public:
 	AMainCharacter();
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable ,Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
-	void OnAttack();
-
-
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "UpdateAnimatorEvent"))
-	void UpdateAnimator();
-
 
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
-	
+	float Health = 100;
+	float Speed =1.0f;
 	bool IsDead = false;
 	bool IsRunning = false;
-
+	bool IsAttacking = false;
 
 	
 

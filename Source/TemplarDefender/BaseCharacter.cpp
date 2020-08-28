@@ -12,25 +12,18 @@ ABaseCharacter::ABaseCharacter()
 
 }
 
-void ABaseCharacter::CheckIfDead()
+void ABaseCharacter::CalculateDead()
 {
-	if (Health <= 0) {
-		Health = 0;
+	if (Health <= 0)
 		IsDead = true;
-	}
 	else
 		IsDead = false;
 }
 
-void ABaseCharacter::AddHealth(float Delta)
+void ABaseCharacter::CalculateHealth(float Delta)
 {
 	Health += Delta;
-	CheckIfDead();
-}
-
-void ABaseCharacter::OnDeath()
-{
-	//idk lol
+	CalculateDead();
 }
 
 // Called when the game starts or when spawned
