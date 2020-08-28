@@ -13,10 +13,5 @@ UCLASS()
 class TEMPLARDEFENDER_API AMainCharacterAngel : public AMainCharacter
 {
 	GENERATED_BODY()
-
-public:
-	AMainCharacterAngel();
-
-	
 	
 };
