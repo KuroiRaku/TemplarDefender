@@ -8,7 +8,7 @@
 
 
 /**
- *
+ * 
  */
 UCLASS()
 class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
@@ -22,7 +22,7 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
-
+	
 public:
 	AMainCharacter();
 
@@ -38,15 +38,15 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-
+	
+	
 	bool IsDead = false;
 	bool IsRunning = false;
 
 
+	
 
-
-
+	
 
 public:
 
@@ -88,5 +88,5 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
+	
 };
