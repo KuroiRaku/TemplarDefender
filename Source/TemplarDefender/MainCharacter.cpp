@@ -14,6 +14,11 @@
 AMainCharacter::AMainCharacter()
 
 {
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> parent of 6d1798e... Revert "Merge branch 'master' of https://github.com/KuroiRaku/TemplarDefender"
 	//Super::ABaseCharacter();
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -104,7 +109,11 @@ void AMainCharacter::MoveForward(float Value)
 	//normal movement speed
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+<<<<<<< HEAD
 		Speed = Value;
+=======
+
+>>>>>>> parent of 6d1798e... Revert "Merge branch 'master' of https://github.com/KuroiRaku/TemplarDefender"
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);

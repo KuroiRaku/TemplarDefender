@@ -8,7 +8,7 @@
 
 
 /**
- * 
+ *
  */
 UCLASS()
 class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
@@ -21,6 +21,11 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> parent of 6d1798e... Revert "Merge branch 'master' of https://github.com/KuroiRaku/TemplarDefender"
 public:
 	AMainCharacter();
 
@@ -28,15 +33,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+<<<<<<< HEAD
 	float Health = 100;
 	float Speed =1.0f;
+=======
+
+
+>>>>>>> parent of 6d1798e... Revert "Merge branch 'master' of https://github.com/KuroiRaku/TemplarDefender"
 	bool IsDead = false;
 	bool IsRunning = false;
 	bool IsAttacking = false;
 
-	
 
-	
+
+
 
 public:
 
@@ -78,5 +88,5 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	
+
 };
