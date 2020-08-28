@@ -53,7 +53,7 @@ AMainCharacter::AMainCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
 
-	//AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void AMainCharacter::Tick(float DeltaTime)

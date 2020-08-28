@@ -2,6 +2,7 @@
 
 
 #include "MainCharacterDemon.h"
+#include "Components/CapsuleComponent.h"
 
 AMainCharacterDemon::AMainCharacterDemon()
 	:Super()

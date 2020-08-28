@@ -2,6 +2,7 @@
 
 
 #include "MainCharacterKnight.h"
+#include "Components/CapsuleComponent.h"
 
 AMainCharacterKnight::AMainCharacterKnight()
 	:Super()
