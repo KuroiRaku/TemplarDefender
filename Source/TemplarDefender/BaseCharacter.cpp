@@ -29,6 +29,12 @@ void ABaseCharacter::AddHealth(float Delta)
 	CheckIfDead();
 }
 
+void ABaseCharacter::OnHurt()
+{
+	AddHealth(-60);
+	//idk lol
+}
+
 void ABaseCharacter::OnDeath()
 {
 	//idk lol

@@ -25,6 +25,8 @@ public:
 
 	virtual void CheckIfDead();
 	virtual void AddHealth(float Delta);
+	UFUNCTION(BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnHurt"))
+	void OnHurt();
 	virtual void OnDeath();
 	
 
