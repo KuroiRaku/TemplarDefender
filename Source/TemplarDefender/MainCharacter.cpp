@@ -20,6 +20,9 @@ AMainCharacter::AMainCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
+	//Character Switching Variables
+	characterId = 1;//0 = Demon, 1 = Knight, 2 = Angel
+
 	Speed = 1.0f;
 	Health = 200;
 	Damage = 50;
@@ -107,6 +110,34 @@ void AMainCharacter::Tick(float DeltaTime)
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%.5d", GetActorRotation())));
 }
 
+void AMainCharacter::OnDeath() {
+
+	characterId -= 1;
+
+	if (characterId < 0)
+		characterId = 2;
+
+	SetCharacterStats();
+	Health = 100;
+}
+
+void AMainCharacter::SetCharacterStats() {
+	if (characterId == 0) {// Demon
+		Health = 200;
+		Speed = 1.4f;
+		Damage = 100;
+	}
+	else if (characterId == 1) {// Knight
+		Health = 100;
+		Speed = 1.0f;
+		Damage = 10;
+	}
+	else if (characterId == 2) {// Angel
+		Health = 70;
+		Speed = 1.5f;
+		Damage = 7;
+	}
+}
 
 
 

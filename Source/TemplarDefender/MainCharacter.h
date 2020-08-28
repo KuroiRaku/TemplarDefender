@@ -38,14 +38,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
+	int characterId;
 
 	bool IsDead = false;
 	bool IsRunning = false;
 
+	void OnDeath();
 
-
-
+	void SetCharacterStats();
 
 
 public:

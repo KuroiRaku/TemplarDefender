@@ -17,6 +17,7 @@ void ABaseCharacter::CheckIfDead()
 	if (Health <= 0) {
 		Health = 0;
 		IsDead = true;
+		OnDeath();
 	}
 	else
 		IsDead = false;
