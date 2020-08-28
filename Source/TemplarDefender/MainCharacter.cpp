@@ -110,6 +110,12 @@ void AMainCharacter::Tick(float DeltaTime)
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%.5d", GetActorRotation())));
 }
 
+/*void ABaseCharacter::OnHurt()
+{
+	AddHealth(-60);
+	//idk lol
+}*/
+
 void AMainCharacter::OnDeath() {
 
 	characterId -= 1;

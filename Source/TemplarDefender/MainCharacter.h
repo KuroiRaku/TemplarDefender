@@ -33,6 +33,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "UpdateAnimatorEvent"))
 	void UpdateAnimator();
 
+	//UFUNCTION(BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnHurt"))
+	//void OnHurt();
 
 
 	// Called every frame
