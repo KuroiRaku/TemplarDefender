@@ -15,7 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
 
+	UPROPERTY(BlueprintReadOnly)
 	float Health = 100;
+
 	float Speed = 1.0f;
 	int Damage = 10;
 	bool IsDead = false;

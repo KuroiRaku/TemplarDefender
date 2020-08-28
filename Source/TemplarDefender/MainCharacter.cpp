@@ -234,7 +234,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::StopRunning);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::Attack);
-	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);
+	//PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);
 
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
