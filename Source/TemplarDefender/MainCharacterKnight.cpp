@@ -6,7 +6,6 @@
 AMainCharacterKnight::AMainCharacterKnight()
 	:Super()
 {
-	
 	Health = 150;
 	Speed = 1.5;
 	Damage = 80;

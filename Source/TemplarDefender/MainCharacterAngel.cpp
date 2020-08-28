@@ -2,6 +2,7 @@
 
 
 #include "MainCharacterAngel.h"
+#include "Components/CapsuleComponent.h"
 
 AMainCharacterAngel::AMainCharacterAngel()
 	:Super()

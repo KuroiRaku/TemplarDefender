@@ -3,3 +3,9 @@
 
 #include "MainLevelScriptActor.h"
 
+AMainLevelScriptActor::AMainLevelScriptActor()
+{
+
+
+}
+
