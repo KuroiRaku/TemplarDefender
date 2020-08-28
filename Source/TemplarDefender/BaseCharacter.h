@@ -28,6 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnHurt"))
 	void OnHurt();
 	virtual void OnDeath();
+	
 
 protected:
 	// Called when the game starts or when spawned
