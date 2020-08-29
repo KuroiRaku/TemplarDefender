@@ -19,7 +19,7 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
 
-	//UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	float Health = 100;
 	UPROPERTY(BlueprintReadOnly)
 	float Speed = 1.0f;
@@ -51,6 +51,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Getters", meta = (DisplayName = "GetHealth"))
-	inline int GetHealth() { return Health; }
+	
 };
