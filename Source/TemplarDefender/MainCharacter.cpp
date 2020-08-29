@@ -44,13 +44,11 @@ AMainCharacter::AMainCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-	
 
 	//Create the character Sprite
 	Knight = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Knight"));
 	Knight->SetWorldScale3D(FVector(4, 4, 4));
 	Knight->SetRelativeScale3D(FVector(4, 4, 4));
-	Knight->SetWorldRotation(FRotator(0.f, 90.f, 0.f));
 	Knight->SetupAttachment(RootComponent);
 	Knight->SetVisibility(true);
 
@@ -59,14 +57,12 @@ AMainCharacter::AMainCharacter()
 	Angel->SetupAttachment(RootComponent);
 	Angel->SetWorldScale3D(FVector(4, 4, 4));
 	Angel->SetRelativeScale3D(FVector(4, 4, 4));
-	Angel->SetWorldRotation(FRotator(0.f, 90.f, 0.f));
 	Angel->SetVisibility(false);
 
 	Demon= CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Demon"));
 	Demon->SetupAttachment(RootComponent);
 	Demon->SetWorldScale3D(FVector(4, 4, 4));
 	Demon->SetRelativeScale3D(FVector(4, 4, 4));
-	Demon->SetWorldRotation(FRotator(0.f, 90.f, 0.f));
 	Demon->SetVisibility(false);
 	
 
