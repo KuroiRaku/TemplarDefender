@@ -12,6 +12,7 @@
 #include "GameFramework/Character.h"
 #include "Engine.h"
 #include "PaperSpriteComponent.h"
+#include "PaperFlipbookComponent.h"
 
 AMainCharacter::AMainCharacter()
 
@@ -39,29 +40,31 @@ AMainCharacter::AMainCharacter()
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	//Create the character Sprite
-	Knight = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Knight"));
-	Knight->SetWorldScale3D(FVector(5,5,5));
-	Knight->SetRelativeScale3D(FVector(5, 5, 5));
+	Knight = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Knight"));
+	Knight->SetWorldScale3D(FVector(4, 4, 4));
+	Knight->SetRelativeScale3D(FVector(4, 4, 4));
 	Knight->SetupAttachment(RootComponent);
 	Knight->SetVisibility(true);
 
-	Angel = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Angel"));
+
+	Angel = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Angel"));
 	Angel->SetupAttachment(RootComponent);
-	Angel->SetWorldScale3D(FVector(3, 3, 3));
-	Angel->SetRelativeScale3D(FVector(3, 3, 3));
+	Angel->SetWorldScale3D(FVector(4, 4, 4));
+	Angel->SetRelativeScale3D(FVector(4, 4, 4));
 	Angel->SetVisibility(false);
 
-	Demon= CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Demon"));
+	Demon= CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Demon"));
 	Demon->SetupAttachment(RootComponent);
-	Demon->SetWorldScale3D(FVector(3, 3, 3));
-	Demon->SetRelativeScale3D(FVector(3, 3, 3));
+	Demon->SetWorldScale3D(FVector(4, 4, 4));
+	Demon->SetRelativeScale3D(FVector(4, 4, 4));
 	Demon->SetVisibility(false);
+	
 
 	/*RootComponent->SetWorldScale3D(FVector(3, 3, 3));
 	RootComponent->SetRelativeScale3D(FVector(3, 3, 3));*/
@@ -74,7 +77,7 @@ AMainCharacter::AMainCharacter()
 	CameraBoom->bInheritPitch = false;
 	CameraBoom->bInheritRoll = false;
 	CameraBoom->bInheritYaw = false;
-	CameraBoom->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-25.0f, 0.0f, 0.0f));
+	CameraBoom->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 50.0f), FRotator(-45.0f, 0.0f, 0.0f));
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -91,7 +94,7 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsRunning)
+	/*if (IsRunning)
 	{
 
 
@@ -99,11 +102,12 @@ void AMainCharacter::Tick(float DeltaTime)
 	else {
 
 
-	}
+	}*/
 	//UpdateAnimator();
 	//Switch Characters?
 	if (IsDead)
 	{
+		OnDeath();
 		UpdateAnimator();
 	}
 
@@ -126,9 +130,9 @@ void AMainCharacter::Tick(float DeltaTime)
 	FRotator NewYaw = GetActorRotation();
 	NewYaw.Yaw += CameraInput.X;
 
-	//Trying to debug below O.O
-	//SetActorRotation(NewYaw);
 	//
+	//SetActorRotation(NewYaw);
+	// Trying to debug below O.O
 	//	FRotator NewPitch = CameraBoom->GetComponentRotation();
 	//	//we should discuss whether we should make player able to look at character closer :p
 	////	NewPitch.Pitch = FMath::Clamp<float>(NewPitch.Pitch + CameraInput.Y, -90.0f, -90.0f);
@@ -156,22 +160,43 @@ void AMainCharacter::OnDeath() {
 }
 
 void AMainCharacter::SetCharacterStats() {
+	FTimerHandle UnusedHandle;
 	if (CharacterID == 0) {// Demon
+		Knight->SetFlipbook(KnightDeath);
+		
+		GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+			IsDead = false;
+			}, 0.f, false,0.2f);
 		Knight->SetVisibility(false);
+		Knight->SetFlipbook(KnightRunning);
+		//Demon->SetFlipbook(DemonRunning);
 		Demon->SetVisibility(true);
 		Health = 200;
 		Speed = 1.4f;
 		Damage = 100;
 	}
 	else if (CharacterID == 1) {// Knight
+		Angel->SetFlipbook(AngelDeath);
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.f, false, 0.5);
+		
 		Angel->SetVisibility(false);
+		Angel->SetFlipbook(AngelRunning);
+		//Knight->SetFlipbook(KnightRunning);
 		Knight->SetVisibility(true);
 		Health = 100;
 		Speed = 1.0f;
 		Damage = 10;
 	}
 	else if (CharacterID == 2) {// Angel
+		Demon->SetFlipbook(DemonDeath);
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.f, false, 0.5);
 		Demon->SetVisibility(false);
+		Demon->SetFlipbook(DemonRunning);
+		if (!DemonRunning)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%DemonRunning Not Exist")));
+		}
+		//Angel->SetFlipbook(AngelRunning);
 		Angel->SetVisibility(true);
 
 		Health = 70;
@@ -214,7 +239,15 @@ void AMainCharacter::MoveRight(float Value)
 		// get right vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-
+		//left
+		if (Value < 0)
+		{
+			SetActorRotation(FRotator(0.f,-180.f,0.f));
+		}
+		//right
+		else {
+			SetActorRotation(FRotator(0.f, 0.f, 0.f));
+		}
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -228,17 +261,65 @@ void AMainCharacter::Run()
 void AMainCharacter::StopRunning()
 {
 	IsRunning = false;
+
 	this->GetCharacterMovement()->MaxWalkSpeed = Speed * 300.0f;
 }
 
-/*void AMainCharacter::OnAttack() {
-
-}*/
+//void AMainCharacter::OnAttack() {
+//
+//}
 
 void AMainCharacter::Attack()
 {
 	IsAttacking = true;
+	FTimerHandle UnusedHandle;
+	//OnAttack maybe can call in collision boxes etc
 	OnAttack();
+	switch (CharacterID) {
+		
+	case 0:
+		//Demon
+		//Switch to attack animation
+		{	//Temporary = Demon->GetFlipbook();
+			Demon->SetFlipbook(DemonAttacking);
+			//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
+			GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+				IsAttacking = false;
+				}, 0.f, false, 0.4f);
+			Demon->SetFlipbook(DemonRunning);
+		}
+		break;
+	case 1:
+		//Human
+	{//Temporary = Knight->GetFlipbook();
+	Knight->SetFlipbook(KnightAttacking);
+
+	//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+		IsAttacking = false;
+		}, 0.f, false, 0.4f);
+	Knight->SetFlipbook(KnightRunning);
+	}
+		break;
+	case 2:
+		//Angel
+	{	//Temporary = Angel->GetFlipbook();
+		Angel->SetFlipbook(AngelAttacking);
+
+		//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
+		GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+			IsAttacking = false;
+			}, 0.f, false, 0.4f);
+		Angel->SetFlipbook(AngelRunning);
+	}
+		break;
+	}
+	IsAttacking = false;
+}
+
+void AMainCharacter::StopAttacking()
+{
+	IsAttacking = false;
 }
 
 void AMainCharacter::PitchCamera(float AxisValue)
@@ -275,7 +356,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::StopRunning);
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::Attack);
-	PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::Attack);
+	/*PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::StopAttacking);*/
 
 
 	//Debug Switch

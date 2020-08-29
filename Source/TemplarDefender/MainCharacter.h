@@ -24,16 +24,56 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
+	//default is idle
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
-		class UPaperSpriteComponent* Angel;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
-		class UPaperSpriteComponent* Knight;
+		class UPaperFlipbookComponent* Angel;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
-		class UPaperSpriteComponent* Demon;
+		class UPaperFlipbookComponent* Knight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbookComponent* Demon;
 
+	/**if we need to do it in C++, this is how we do it :p */
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* AngelRunning;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* KnightRunning;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* DemonRunning;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* AngelAttacking;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* KnightAttacking;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* DemonAttacking;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* AngelDeath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* KnightDeath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UPaperFlipbook* DemonDeath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* KnightMeleeCollisionBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* AngelMeleeCollisionBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* DemonMeleeCollisionBox;
+
+	/*UPROPERTY()
+		class UPaperFlipbook* Temporary;*/
 
 public:
 	AMainCharacter();
@@ -52,14 +92,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ZZZ", meta = (DisplayName = "CharacterID"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ZZZ", meta = (DisplayName = "CharacterID"))
 	int CharacterID;
 
-	bool IsDead = false;
+	
 	bool IsRunning = false;
+
+	
 
 	void OnDeath();
 
+	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "SetCharacterStats"))
 	void SetCharacterStats();
 
 
@@ -78,12 +121,15 @@ public:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "RunEvent"))
 	void Run();
 
+	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "StopRunning"))
 	void StopRunning();
 
+	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "AttackEvent"))
 	void Attack();
-
+	void StopAttacking();
 
 	void PitchCamera(float AxisValue);
 	void YawCamera(float AxisValue);
