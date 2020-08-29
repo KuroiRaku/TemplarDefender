@@ -162,47 +162,52 @@ void AMainCharacter::OnDeath() {
 void AMainCharacter::SetCharacterStats() {
 	FTimerHandle UnusedHandle;
 	if (CharacterID == 0) {// Demon
-		Knight->SetFlipbook(KnightDeath);
+		//death animation
+		UpdateAnimator();
+		/*Knight->SetFlipbook(KnightDeath);
 		
 		GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
 			IsDead = false;
-			}, 0.f, false,0.2f);
+			}, 0.f, false,0.2f);*/
 		Knight->SetVisibility(false);
-		Knight->SetFlipbook(KnightRunning);
-		//Demon->SetFlipbook(DemonRunning);
+		/*
+		Demon->SetFlipbook(DemonRunning);*/
+		UpdateAnimator();
 		Demon->SetVisibility(true);
 		Health = 200;
 		Speed = 1.4f;
 		Damage = 100;
 	}
 	else if (CharacterID == 1) {// Knight
-		Angel->SetFlipbook(AngelDeath);
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.f, false, 0.5);
+		//death animation
+		UpdateAnimator();
 		
 		Angel->SetVisibility(false);
-		Angel->SetFlipbook(AngelRunning);
-		//Knight->SetFlipbook(KnightRunning);
+		//idle animation
+		UpdateAnimator();
+		
 		Knight->SetVisibility(true);
+		
 		Health = 100;
 		Speed = 1.0f;
 		Damage = 10;
 	}
 	else if (CharacterID == 2) {// Angel
-		Demon->SetFlipbook(DemonDeath);
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.f, false, 0.5);
+		//Death
+		UpdateAnimator();
+
 		Demon->SetVisibility(false);
-		Demon->SetFlipbook(DemonRunning);
-		if (!DemonRunning)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("%DemonRunning Not Exist")));
-		}
-		//Angel->SetFlipbook(AngelRunning);
+		
+		
+		UpdateAnimator();
 		Angel->SetVisibility(true);
 
 		Health = 70;
 		Speed = 1.5f;
 		Damage = 7;
 	}
+
+	
 }
 
 
@@ -255,13 +260,14 @@ void AMainCharacter::MoveRight(float Value)
 void AMainCharacter::Run()
 {
 	IsRunning = true;
+	UpdateAnimator();
 	this->GetCharacterMovement()->MaxWalkSpeed = Speed * 600.0f;
 }
 
 void AMainCharacter::StopRunning()
 {
 	IsRunning = false;
-
+	UpdateAnimator();
 	this->GetCharacterMovement()->MaxWalkSpeed = Speed * 300.0f;
 }
 
@@ -281,39 +287,42 @@ void AMainCharacter::Attack()
 		//Demon
 		//Switch to attack animation
 		{	//Temporary = Demon->GetFlipbook();
-			Demon->SetFlipbook(DemonAttacking);
+			//Demon->SetFlipbook(DemonAttacking);
 			//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
-			GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
-				IsAttacking = false;
-				}, 0.f, false, 0.4f);
-			Demon->SetFlipbook(DemonRunning);
+			//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+			//	IsAttacking = false;
+			//	}, 0.f, false, 0.4f);
+			//Demon->SetFlipbook(DemonRunning);
+
+		//attacking box collision here
 		}
 		break;
 	case 1:
 		//Human
 	{//Temporary = Knight->GetFlipbook();
-	Knight->SetFlipbook(KnightAttacking);
+	//Knight->SetFlipbook(KnightAttacking);
 
-	//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
-	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
-		IsAttacking = false;
-		}, 0.f, false, 0.4f);
-	Knight->SetFlipbook(KnightRunning);
+	////GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
+	//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+	//	IsAttacking = false;
+	//	}, 0.f, false, 0.4f);
+	//Knight->SetFlipbook(KnightRunning);
 	}
 		break;
 	case 2:
 		//Angel
 	{	//Temporary = Angel->GetFlipbook();
-		Angel->SetFlipbook(AngelAttacking);
+		//Angel->SetFlipbook(AngelAttacking);
 
-		//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
-		GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
-			IsAttacking = false;
-			}, 0.f, false, 0.4f);
-		Angel->SetFlipbook(AngelRunning);
+		////GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
+		//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
+		//	IsAttacking = false;
+		//	}, 0.f, false, 0.4f);
+		//Angel->SetFlipbook(AngelRunning);
 	}
 		break;
 	}
+	UpdateAnimator();
 	IsAttacking = false;
 }
 
