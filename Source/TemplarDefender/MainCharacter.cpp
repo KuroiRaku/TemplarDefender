@@ -3,9 +3,11 @@
 
 #include "MainCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "Math/Rotator.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SceneComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -49,6 +51,8 @@ AMainCharacter::AMainCharacter()
 	Knight = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Knight"));
 	Knight->SetWorldScale3D(FVector(4, 4, 4));
 	Knight->SetRelativeScale3D(FVector(4, 4, 4));
+	Knight->SetRelativeRotation(FRotator(0,90, 0));
+	//Knight->SetRelativeLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, -90));
 	Knight->SetupAttachment(RootComponent);
 	Knight->SetVisibility(true);
 
@@ -57,12 +61,14 @@ AMainCharacter::AMainCharacter()
 	Angel->SetupAttachment(RootComponent);
 	Angel->SetWorldScale3D(FVector(4, 4, 4));
 	Angel->SetRelativeScale3D(FVector(4, 4, 4));
+	Angel->SetRelativeRotation(FRotator(0, 90, 0));
 	Angel->SetVisibility(false);
 
 	Demon= CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Demon"));
 	Demon->SetupAttachment(RootComponent);
 	Demon->SetWorldScale3D(FVector(4, 4, 4));
 	Demon->SetRelativeScale3D(FVector(4, 4, 4));
+	Demon->SetRelativeRotation(FRotator(0, 90, 0));
 	Demon->SetVisibility(false);
 	
 
@@ -155,6 +161,7 @@ void AMainCharacter::OnDeath() {
 	if (CharacterID < 0)
 		CharacterID = 2;
 
+	SetAnimatorOnDeath();
 	SetCharacterStats();
 	Health = 100;
 }

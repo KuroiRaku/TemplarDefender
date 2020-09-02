@@ -78,8 +78,11 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 public:
 	AMainCharacter();
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable ,Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
-	void OnAttack();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnDeathEvent"))
+		void SetAnimatorOnDeath();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
+		void OnAttack();
 
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "UpdateAnimatorEvent"))
