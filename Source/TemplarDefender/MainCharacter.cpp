@@ -217,6 +217,19 @@ void AMainCharacter::SetCharacterStats() {
 	
 }
 
+void AMainCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
+{
+	FActorSpawnParameters SpawnParameters;
+	// reference from the internet 
+	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
+	HitBox = GetWorld()->SpawnActor<ADamageHitBox>(GetActorLocation(), GetActorRotation(),SpawnParameters);
+	HitBox->Initialize(Damage, GetActorLocation(), HitBoxType);
+	HitBox->VisualizeHitbox();
+	//HitboxesArray.Add(HitBox);
+
+	
+}
+
 
 
 void AMainCharacter::MoveForward(float Value)
@@ -288,49 +301,41 @@ void AMainCharacter::Attack()
 	FTimerHandle UnusedHandle;
 	//OnAttack maybe can call in collision boxes etc
 	OnAttack();
+	
 	switch (CharacterID) {
 		
 	case 0:
-		//Demon
-		//Switch to attack animation
-		{	//Temporary = Demon->GetFlipbook();
-			//Demon->SetFlipbook(DemonAttacking);
-			//GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
-			//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
-			//	IsAttacking = false;
-			//	}, 0.f, false, 0.4f);
-			//Demon->SetFlipbook(DemonRunning);
-
-		//attacking box collision here
+		{	
+		SpawnHitBox(Damage, EHitBoxType::HB_DEMON);
 		}
 		break;
 	case 1:
 		//Human
-	{//Temporary = Knight->GetFlipbook();
-	//Knight->SetFlipbook(KnightAttacking);
-
-	////GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
-	//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
-	//	IsAttacking = false;
-	//	}, 0.f, false, 0.4f);
-	//Knight->SetFlipbook(KnightRunning);
-	}
-		break;
-	case 2:
-		//Angel
-	{	//Temporary = Angel->GetFlipbook();
-		//Angel->SetFlipbook(AngelAttacking);
+	{
+		SpawnHitBox(Damage, EHitBoxType::HB_KNIGHT);
+		
+		//Knight->SetFlipbook(KnightAttacking);
 
 		////GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::Attack, 0.1f, false);
 		//GetWorld()->GetTimerManager().SetTimer(UnusedHandle, [this]() {
 		//	IsAttacking = false;
 		//	}, 0.f, false, 0.4f);
-		//Angel->SetFlipbook(AngelRunning);
+		//Knight->SetFlipbook(KnightRunning);
 	}
 		break;
+	case 2:
+		//Angel
+	{	
+		SpawnHitBox(Damage, EHitBoxType::HB_ANGEL);
+	}break;
 	}
 	UpdateAnimator();
 	IsAttacking = false;
+	
+	if (HitBox->Destroy()) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Hitboxes! ");
+	};
+	
 }
 
 void AMainCharacter::StopAttacking()

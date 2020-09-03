@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 //#include "PaperSpriteComponent.h"
+#include "DamageHitBox.h"
 #include "MainCharacter.generated.h"
+
 
 
 
@@ -71,7 +73,12 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* DemonMeleeCollisionBox;
+	//TSubclassOf lets you restrict the types that can be assigned to a class property at runtime or compile time.
+	//For instance, suppose you have a pickup class in your gameand you want to create a blueprintable pickup spawner for it.If you were to define your pickup spawner this way :
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	TSubclassOf<class ADamageHitBox> DamageHitBoxes;
 
+	class ADamageHitBox* HitBox;
 	/*UPROPERTY()
 		class UPaperFlipbook* Temporary;*/
 
@@ -107,6 +114,8 @@ public:
 
 	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "SetCharacterStats"))
 	void SetCharacterStats();
+
+	void SpawnHitBox(float Damage, EHitBoxType HitBoxType);
 
 
 public:
@@ -146,6 +155,8 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+	//TArray<ADamageHitBox*> HitboxesArray;
 
 public:
 	/** Returns CameraBoom subobject **/
