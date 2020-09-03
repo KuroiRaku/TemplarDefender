@@ -78,7 +78,9 @@ class TEMPLARDEFENDER_API AMainCharacter : public ABaseCharacter
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<class ADamageHitBox> DamageHitBoxes;
 
-	class ADamageHitBox* HitBox;
+	UPROPERTY(EditAnywhere)
+	class ADamageHitBox* DamageBox;
+
 	/*UPROPERTY()
 		class UPaperFlipbook* Temporary;*/
 

@@ -40,7 +40,7 @@ void ABaseCharacter::AddHealth(float Delta)
 
 void ABaseCharacter::OnHurt(float Delta)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Damaged! ");
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Damaged! Health: %d");
 	AddHealth(-Delta);
 	//idk lol
 }
@@ -57,8 +57,9 @@ void ABaseCharacter:: OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this)) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Calling On Box Begin Overlap! ");
-		OnHurt(-20.f);
+		//FColor::Yellow, FString::Printf(TEXT("World delta for current frame equals %f"), GetWorld()->TimeSeconds)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Onbox getting overlapped Health: %f"), Health));
+		//OnHurt(-20.f);
 	}
 
 }

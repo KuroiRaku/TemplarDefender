@@ -222,9 +222,9 @@ void AMainCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
 	FActorSpawnParameters SpawnParameters;
 	// reference from the internet 
 	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
-	HitBox = GetWorld()->SpawnActor<ADamageHitBox>(GetActorLocation(), GetActorRotation(),SpawnParameters);
-	HitBox->Initialize(Damage, GetActorLocation(), HitBoxType);
-	HitBox->VisualizeHitbox();
+	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(GetActorLocation(), GetActorRotation(),SpawnParameters);
+	DamageBox->Initialize(Damage, GetActorLocation(), HitBoxType);
+	DamageBox->VisualizeHitbox();
 	//HitboxesArray.Add(HitBox);
 
 	
@@ -332,8 +332,8 @@ void AMainCharacter::Attack()
 	UpdateAnimator();
 	IsAttacking = false;
 	
-	if (HitBox->Destroy()) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Hitboxes! ");
+	if (DamageBox->Destroy()) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Damageboxes! ");
 	};
 	
 }

@@ -78,15 +78,17 @@ void ADamageHitBox::VisualizeHitbox()
 void ADamageHitBox::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// check if Actors do not equal nullptr
-	if (OtherActor && (OtherActor != this))
+	//ABaseCharacter TestObject = Cast<ABaseCharacter>(OtherActor);
+	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("We start"));
+		UE_LOG(LogTemp, Warning, TEXT("We start, Cast successful"));
+		Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
 	}
 }
 
 void ADamageHitBox::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherActor && (OtherActor != this))
+	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("We Ended"));
 	}
