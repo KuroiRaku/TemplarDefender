@@ -130,7 +130,7 @@ void AMainCharacter::Tick(float DeltaTime)
 	ZoomFactor = FMath::Clamp<float>(ZoomFactor, 0.0f, 1.0f);
 	//Blend our camera's FOV and our SpringArm's length based on ZoomFactor
 	FollowCamera->FieldOfView = FMath::Lerp<float>(90.0f, 60.0f, ZoomFactor);
-	CameraBoom->TargetArmLength = FMath::Lerp<float>(600.0f, 400.0f, ZoomFactor);
+	CameraBoom->TargetArmLength = FMath::Lerp<float>(1100.0f, 900.0f, ZoomFactor);
 
 
 	FRotator NewYaw = GetActorRotation();
