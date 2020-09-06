@@ -3,7 +3,11 @@
 
 #include "DamageHitBox.h"
 #include "Components/BoxComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "BaseCharacter.h"
+#include "DrawDebugHelpers.h"
+#include "Engine/Engine.h"
+#include "ConstructorHelpers.h"
 
 // Sets default values
 ADamageHitBox::ADamageHitBox()
@@ -11,21 +15,48 @@ ADamageHitBox::ADamageHitBox()
 	
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
+	
 	HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetHiddenInGame(false);
 	
 	HitBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	
-	HitColor = CreateDefaultSubobject<UMaterialInterface>(TEXT("HitMaterial"));
-	DamageColor = CreateDefaultSubobject<UMaterialInterface>(TEXT("ProximityMaterial"));
+	
+
+
+	//HitColor = CreateDefaultSubobject<UMaterialInterface>(TEXT("HitMaterial"));
+	//HitColor = (UMaterialInterface* )UMaterialInstanceDynamic::Create(StoredMaterial, this);
+
+	//old method doesn't work :(
+	/*ConstructorHelpers::FObjectFinder<UMaterial> FoundMaterial2(TEXT("/Game/Material/Red.Red"));
+
+	if (FoundMaterial2.Succeeded())
+	{
+		UMaterialInstanceDynamic* DynamicMaterialInstance2 = UMaterialInstanceDynamic::Create(FoundMaterial2.Object, this);
+		UE_LOG(LogTemp, Warning, TEXT("Found damage color aka red"));
+		DamageColor = (UMaterialInterface*)DynamicMaterialInstance2;
+	}*/
+
+
+	
+	//DamageColor = (UMaterialInterface*)UMaterialInstanceDynamic::Create(StoredMaterial, this);
+
+	/*HitColor = CreateDefaultSubobject<UMaterialInterface>(TEXT("HitMaterial"));
+	DamageColor = CreateDefaultSubobject<UMaterialInterface>(TEXT("DamageMaterial"));
+	*/
 	Color = CreateDefaultSubobject<UMaterialInterface>(TEXT("NormalMaterial"));
 
-	HitBox->SetMaterial(0, Color);
+	HitColor = HitBox->CreateDynamicMaterialInstance(0);
+	if (HitColor != nullptr)
+	{
+		HitColor->SetVectorParameterValue(FName("blue"),FLinearColor(0.f,0.f,1.f,0.f));
+	}
+	//HitBox->SetMaterial(0, HitColor);
 	
-	HitBox->OnComponentBeginOverlap.AddDynamic(this, &ADamageHitBox::OnOverlapBegin);
-	HitBox->OnComponentEndOverlap.AddDynamic(this, &ADamageHitBox::OnOverlapEnd);
+	
+	//HitBox->OnComponentBeginOverlap.AddDynamic(this, &ADamageHitBox::OnOverlapBegin);
+	//HitBox->OnComponentEndOverlap.AddDynamic(this, &ADamageHitBox::OnOverlapEnd);
 
 }
 
@@ -33,64 +64,93 @@ void ADamageHitBox::Initialize(float Damage, FVector Location, EHitBoxType HitBo
 {
 	this->Damage = Damage;
 	this->HitBoxLocation = Location;
-	HitBoxLocation.Y += 100;
 	this->HitBoxType = HitBoxType;
 }
 
 void ADamageHitBox::VisualizeHitbox()
 {
+	HitBox->SetMaterial(0, HitColor);
 	switch (HitBoxType)
 	{
 	case EHitBoxType::HB_ANGEL:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 2, 8));
+		HitBox->SetWorldScale3D(FVector(0.1, 3, 8));
 		HitBox->SetWorldLocation(HitBoxLocation);
 		
 		}break;
 	case EHitBoxType::HB_KNIGHT:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 2, 4));
+		HitBox->SetWorldScale3D(FVector(0.1, 3, 4));
 		HitBox->SetWorldLocation(HitBoxLocation);
 
 		}break;
 	case EHitBoxType::HB_DEMON:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 1, 1));
+		HitBox->SetWorldScale3D(FVector(0.1, 3, 1));
 		HitBox->SetWorldLocation(HitBoxLocation);
 
 
 		}break;
 	}
-	/*if (IfCollides)
+	DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Purple, true, 2, 0, 5);
+	if (IfCollides())
 	{
-		HitBox->SetMaterial(0, HitColor);
-	}*/
+		DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
+		DamageColor = HitBox->CreateDynamicMaterialInstance(0);
+				if (DamageColor != nullptr)
+				{
+					DamageColor->SetVectorParameterValue(FName("red"), FLinearColor(1.f, 0.f, 0.f, 0.f));
+				}
+	}
 }
 
-//bool ADamageHitBox::IfCollides()
+bool ADamageHitBox::IfCollides()
+{
+	TArray<AActor*> Enemy;
+	GetOverlappingActors(Enemy, TSubclassOf<ABaseCharacter>());
+
+	if (Enemy.Max()<=0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("No enemy found")));
+		return false;
+	}
+	else {
+		//For every enemy in the array that it overlaps, it will deal damage by calling the onhurt function
+		for (auto enemy : Enemy)
+		{
+			Cast<ABaseCharacter> (enemy)->OnHurt(Damage);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors And deals: %f"), Damage));
+			
+		}
+	}
+	
+	return true;
+}
+
+//void ADamageHitBox::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 //{
-//	if (this->IsOverlappingActor(ABaseCharacter)) {
-//		return true;
+//	// check if Actors do not equal nullptr
+//	//ABaseCharacter TestObject = Cast<ABaseCharacter>(OtherActor);
+//	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors ")));
+//		Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
+//		DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
+//		
 //	}
-//	return false;
+//}
+//
+//void ADamageHitBox::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+//{
+//	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
+//	{
+//		UE_LOG(LogTemp, Warning, TEXT("We Ended"));
+//	}
 //}
 
-void ADamageHitBox::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ADamageHitBox::BeginPlay()
 {
-	// check if Actors do not equal nullptr
-	//ABaseCharacter TestObject = Cast<ABaseCharacter>(OtherActor);
-	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("We start, Cast successful"));
-		Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
-	}
-}
-
-void ADamageHitBox::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("We Ended"));
-	}
+	Super::BeginPlay();
+	
 }
 

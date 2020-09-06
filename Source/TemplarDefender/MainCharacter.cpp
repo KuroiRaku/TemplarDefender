@@ -222,8 +222,19 @@ void AMainCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
 	FActorSpawnParameters SpawnParameters;
 	// reference from the internet 
 	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
-	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(GetActorLocation(), GetActorRotation(),SpawnParameters);
-	DamageBox->Initialize(Damage, GetActorLocation(), HitBoxType);
+	FVector Result = GetActorLocation();
+	if (GetActorRotation().Yaw == -180.f) {
+		
+		Result.Y -= 100;
+		
+	}
+	else {
+		
+		Result.Y += 100;
+		
+	}
+	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(),SpawnParameters);
+	DamageBox->Initialize(Damage, Result, HitBoxType);
 	DamageBox->VisualizeHitbox();
 	//HitboxesArray.Add(HitBox);
 
@@ -299,20 +310,19 @@ void AMainCharacter::Attack()
 {
 	IsAttacking = true;
 	FTimerHandle UnusedHandle;
-	//OnAttack maybe can call in collision boxes etc
-	OnAttack();
+	
 	
 	switch (CharacterID) {
 		
 	case 0:
 		{	
-		SpawnHitBox(Damage, EHitBoxType::HB_DEMON);
+		SpawnHitBox(20, EHitBoxType::HB_DEMON);
 		}
 		break;
 	case 1:
 		//Human
 	{
-		SpawnHitBox(Damage, EHitBoxType::HB_KNIGHT);
+		SpawnHitBox(20, EHitBoxType::HB_KNIGHT);
 		
 		//Knight->SetFlipbook(KnightAttacking);
 
@@ -326,9 +336,11 @@ void AMainCharacter::Attack()
 	case 2:
 		//Angel
 	{	
-		SpawnHitBox(Damage, EHitBoxType::HB_ANGEL);
+		SpawnHitBox(20, EHitBoxType::HB_ANGEL);
 	}break;
 	}
+	//OnAttack maybe can call in collision boxes etc
+	OnAttack();
 	UpdateAnimator();
 	IsAttacking = false;
 	

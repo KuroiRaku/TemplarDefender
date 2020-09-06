@@ -24,15 +24,20 @@ class TEMPLARDEFENDER_API ADamageHitBox : public AActor
 
 	//the colour of the boxes where it shows where it going to hit
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UMaterialInterface* HitColor;
+	class UMaterialInstanceDynamic* HitColor;
 
 	//the colour of the boxes where it actually damage the enemies
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UMaterialInterface* DamageColor;
+	class UMaterialInstanceDynamic* DamageColor;
 
 	//Default Colour, kinda useless for now
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
 	class UMaterialInterface* Color;
+
+	/*UPROPERTY(VisibleAnywhere)
+	class UMaterial* StoredMaterial;*/
+
+	//UMaterialInstanceDynamic* DynamicMaterialInstance;
 
 
 public:	
@@ -46,7 +51,7 @@ public:
 
 
 
-	//bool IfCollides();
+	bool IfCollides();
 
 	FVector HitBoxLocation;
 
@@ -54,12 +59,12 @@ public:
 
 	EHitBoxType HitBoxType;
 	
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	//void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
-
+	virtual void BeginPlay() override;
 
 };
 
