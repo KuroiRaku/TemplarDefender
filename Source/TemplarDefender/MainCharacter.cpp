@@ -35,6 +35,10 @@ AMainCharacter::AMainCharacter()
 	Health = 200;
 	Damage = 50;
 
+	IsDead = false;
+	IsAttacking = false;
+	IsRunning = false;
+
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	bUseControllerRotationPitch = false;
@@ -163,6 +167,7 @@ void AMainCharacter::OnDeath() {
 
 	SetAnimatorOnDeath();
 	SetCharacterStats();
+	IsDead = false;
 	Health = 100;
 }
 
