@@ -11,7 +11,9 @@ enum class EHitBoxType
 {
 	HB_ANGEL,
 	HB_KNIGHT,
-	HB_DEMON
+	HB_DEMON,
+	HB_ENEMY1,
+	HB_ENEMY2
 };
 
 UCLASS()
