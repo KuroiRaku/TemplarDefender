@@ -74,7 +74,7 @@ void ADamageHitBox::VisualizeHitbox()
 	{
 	case EHitBoxType::HB_ANGEL:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 3, 8));
+		HitBox->SetWorldScale3D(FVector(0.1, 2, 8));
 		HitBox->SetWorldLocation(HitBoxLocation);
 		
 		}break;
@@ -91,6 +91,11 @@ void ADamageHitBox::VisualizeHitbox()
 
 
 		}break;
+	default:
+	{
+		HitBox->SetWorldScale3D(FVector(0.1, 1, 1));
+		HitBox->SetWorldLocation(HitBoxLocation);
+	}break;
 	}
 	DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Purple, true, 2, 0, 5);
 	if (IfCollides())

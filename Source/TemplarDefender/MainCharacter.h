@@ -91,7 +91,7 @@ public:
 		void SetAnimatorOnDeath();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
-		void OnAttack();
+	void OnAttack();
 
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "UpdateAnimatorEvent"))

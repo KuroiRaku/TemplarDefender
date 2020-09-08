@@ -158,7 +158,7 @@ void AMainCharacter::Tick(float DeltaTime)
 }*/
 
 void AMainCharacter::OnDeath() {
-
+	FTimerHandle UnusedHandle;
 	CharacterID -= 1;
 
 	//resets the CharacterID
@@ -166,13 +166,14 @@ void AMainCharacter::OnDeath() {
 		CharacterID = 2;
 
 	SetAnimatorOnDeath();
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.5f, false);
 	SetCharacterStats();
 	IsDead = false;
-	Health = 100;
+	//Health = 100;
 }
 
 void AMainCharacter::SetCharacterStats() {
-	FTimerHandle UnusedHandle;
+	
 	if (CharacterID == 0) {// Demon
 		//death animation
 		UpdateAnimator();
@@ -313,6 +314,7 @@ void AMainCharacter::StopRunning()
 
 void AMainCharacter::Attack()
 {
+	
 	IsAttacking = true;
 	FTimerHandle UnusedHandle;
 	

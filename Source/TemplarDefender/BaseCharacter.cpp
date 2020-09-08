@@ -2,6 +2,7 @@
 
 
 #include "BaseCharacter.h"
+#include "DamageHitBox.h"
 #include "Components/BoxComponent.h"
 #include "Engine.h"
 
@@ -40,8 +41,9 @@ void ABaseCharacter::AddHealth(float Delta)
 
 void ABaseCharacter::OnHurt(float Delta)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Damaged! Health: %d");
+	
 	AddHealth(-Delta);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Damaged Health: %f"), Health));
 	//idk lol
 }
 
