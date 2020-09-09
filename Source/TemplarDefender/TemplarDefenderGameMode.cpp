@@ -7,6 +7,7 @@
 ATemplarDefenderGameMode::ATemplarDefenderGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	DefaultPawnClass = AMainCharacterKnight::StaticClass();
+	DefaultPawnClass = AMainCharacter::StaticClass();
+	
 	
 }
