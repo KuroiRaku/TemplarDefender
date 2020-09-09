@@ -119,7 +119,7 @@ void AMainCharacter::Tick(float DeltaTime)
 	if (IsDead)
 	{
 		OnDeath();
-		UpdateAnimator();
+		//UpdateAnimator();
 	}
 
 
@@ -167,8 +167,8 @@ void AMainCharacter::OnDeath() {
 		CharacterID = 2;
 
 	SetAnimatorOnDeath();
-	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 0.5f, false);
-	SetCharacterStats();
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 1.0f, false);
+	//SetCharacterStats();
 	IsDead = false;
 	//Health = 100;
 }
@@ -294,7 +294,7 @@ void AMainCharacter::StopRunning()
 void AMainCharacter::CheckIfAttacking()
 {
 	if (IsAttacking)
-		return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Is attacking, so can't attack")));
 	else
 		Attack();
 }
@@ -314,7 +314,7 @@ void AMainCharacter::Attack()
 		}
 		break;
 	case 1:
-		//Human
+		//Knight
 	{
 		SpawnHitBox(EHitBoxType::HB_KNIGHT);
 		
