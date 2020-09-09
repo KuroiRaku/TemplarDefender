@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class ADamageHitBox* DamageBox;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "Attack Event"))
 	void Attack();
 
 	void SpawnHitBox(float Damage, EHitBoxType HitBoxType);
