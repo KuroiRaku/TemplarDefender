@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CharacterWidget.h"
 
-UCharacterWidget::UCharacterWidget(const FObjectInitializer& ObjectInitializer);
+UCharacterWidget::UCharacterWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 
 	
@@ -15,16 +14,26 @@ void UCharacterWidget::NativeConstruct()
 
 }
 
-
 void UCharacterWidget::UpdateHealthPoints(int32 Value)
 {
+	TXTHP->SetVisibility(ESlateVisibility::Visible);
+	ABaseCharacter player = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	TXTHP->SetText(player.Health(FSTring::FromInt(Value) + " HP"));
+
 	if (TXTHP && Value < 1000)
 	{
-		if (TXTHP->SetVisibility == ESlateVisibility::Hidden)
+		if (TXTHP -> SetVisibility == ESlateVisibility::Hidden)
 		{
 			TXTHP->SetVisibility(ESlateVisibility::Visible);
 		}
-		TXTHP->SetText(FTest::FromString(FSTring::FromInt(Value) + " HP"))
+		
+		/*AMainCharacter m_Player = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		TXTHP->SetText(m_Player.hp (FSTring::FromInt(Value) + " HP"));*/
+
+
+		
+
+
 	}
 
 }
