@@ -14,6 +14,7 @@
 #include "GameFramework/Character.h"
 #include "Engine.h"
 #include "PaperSpriteComponent.h"
+#include "Math/Rotator.h"
 #include "PaperFlipbookComponent.h"
 
 AMainCharacter::AMainCharacter()
@@ -223,29 +224,7 @@ void AMainCharacter::SetCharacterStats() {
 	
 }
 
-void AMainCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
-{
-	FActorSpawnParameters SpawnParameters;
-	// reference from the internet 
-	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
-	FVector Result = GetActorLocation();
-	if (GetActorRotation().Yaw == -180.f) {
-		
-		Result.Y -= 100;
-		
-	}
-	else {
-		
-		Result.Y += 100;
-		
-	}
-	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(),SpawnParameters);
-	DamageBox->Initialize(Damage, Result, HitBoxType);
-	DamageBox->VisualizeHitbox();
-	//HitboxesArray.Add(HitBox);
 
-	
-}
 
 
 
@@ -312,6 +291,14 @@ void AMainCharacter::StopRunning()
 //
 //}
 
+void AMainCharacter::CheckIfAttacking()
+{
+	if (IsAttacking)
+		return;
+	else
+		Attack();
+}
+
 void AMainCharacter::Attack()
 {
 	
@@ -323,13 +310,13 @@ void AMainCharacter::Attack()
 		
 	case 0:
 		{	
-		SpawnHitBox(20, EHitBoxType::HB_DEMON);
+		SpawnHitBox(EHitBoxType::HB_DEMON);
 		}
 		break;
 	case 1:
 		//Human
 	{
-		SpawnHitBox(20, EHitBoxType::HB_KNIGHT);
+		SpawnHitBox(EHitBoxType::HB_KNIGHT);
 		
 		//Knight->SetFlipbook(KnightAttacking);
 
@@ -343,18 +330,51 @@ void AMainCharacter::Attack()
 	case 2:
 		//Angel
 	{	
-		SpawnHitBox(20, EHitBoxType::HB_ANGEL);
+		SpawnHitBox(EHitBoxType::HB_ANGEL);
 	}break;
 	}
 	//OnAttack maybe can call in collision boxes etc
 	OnAttack();
 	UpdateAnimator();
 	IsAttacking = false;
+
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::DestroyHitBox, 1.f, false);
 	
+	
+	
+}
+
+void AMainCharacter::SpawnHitBox(EHitBoxType HitBoxType)
+{
+	FActorSpawnParameters SpawnParameters;
+	// reference from the internet 
+	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
+	FVector Result = GetActorLocation();
+	if (GetActorRotation().Yaw > 0.f) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Actor Rotation: Facing Left")));
+		Result.Y -= 200.f;
+
+	}
+	else {
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Actor Rotation: Facing Right, %f"), GetActorRotation().Yaw));
+
+		Result.Y += 200.f;
+
+	}
+	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(), SpawnParameters);
+	DamageBox->Initialize(Damage, Result, HitBoxType);
+	DamageBox->VisualizeHitbox();
+	//HitboxesArray.Add(HitBox);
+
+
+}
+
+void AMainCharacter::DestroyHitBox()
+{
 	if (DamageBox->Destroy()) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Damageboxes! ");
 	};
-	
 }
 
 void AMainCharacter::StopAttacking()
@@ -395,7 +415,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AMainCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AMainCharacter::StopRunning);
 
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::Attack);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainCharacter::CheckIfAttacking);
 	/*PlayerInputComponent->BindAction("Attack", IE_Released, this, &AMainCharacter::StopAttacking);*/
 
 

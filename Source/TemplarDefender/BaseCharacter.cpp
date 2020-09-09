@@ -18,6 +18,7 @@ ABaseCharacter::ABaseCharacter()
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetHiddenInGame(false);
 	HitBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	HitBox->SetWorldScale3D(FVector(0.5,0.5,0.5));
 	
 	
 }

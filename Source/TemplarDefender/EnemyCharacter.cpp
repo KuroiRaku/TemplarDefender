@@ -67,23 +67,25 @@ void AEnemyCharacter::Attack()
 
 void AEnemyCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
 {
+
 	FActorSpawnParameters SpawnParameters;
 	// reference from the internet 
 	// AProjectileArrow* spawnedArrow = (AProjectileArrow*) GetWorld()->SpawnActor(AProjectileArrow::StaticClass(), NAME_None, &yourLocation);
 	FVector Result = GetActorLocation();
 	if (GetActorRotation().Yaw == -180.f) {
 
-		Result.Y -= 100;
+		Result.Y -= 500.f;
 
 	}
 	else {
 
-		Result.Y += 100;
+		Result.Y += 300.f;
 
 	}
 	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(), SpawnParameters);
 	DamageBox->Initialize(Damage, Result, HitBoxType);
 	DamageBox->VisualizeHitbox();
+	
 	//HitboxesArray.Add(HitBox);
 
 }
@@ -115,4 +117,7 @@ void AEnemyCharacter::DestroyActor()
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
+
 }

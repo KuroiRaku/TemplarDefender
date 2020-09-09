@@ -88,7 +88,7 @@ public:
 	AMainCharacter();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnDeathEvent"))
-		void SetAnimatorOnDeath();
+	void SetAnimatorOnDeath();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "OnAttackEvent"))
 	void OnAttack();
@@ -117,7 +117,7 @@ public:
 	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "SetCharacterStats"))
 	void SetCharacterStats();
 
-	void SpawnHitBox(float Damage, EHitBoxType HitBoxType);
+	
 
 
 public:
@@ -140,9 +140,13 @@ public:
 
 	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "StopRunning"))
 	void StopRunning();
-
+	
+	//attack
+	void CheckIfAttacking();
 	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "AttackEvent"))
 	void Attack();
+	void SpawnHitBox(EHitBoxType HitBoxType);
+	void DestroyHitBox();
 	void StopAttacking();
 
 	void PitchCamera(float AxisValue);

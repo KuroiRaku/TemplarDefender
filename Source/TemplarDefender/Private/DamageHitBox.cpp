@@ -70,11 +70,12 @@ void ADamageHitBox::Initialize(float Damage, FVector Location, EHitBoxType HitBo
 void ADamageHitBox::VisualizeHitbox()
 {
 	HitBox->SetMaterial(0, HitColor);
+	/*HitBoxLocation.Y += 200.f;*/
 	switch (HitBoxType)
 	{
 	case EHitBoxType::HB_ANGEL:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 2, 8));
+		HitBox->SetWorldScale3D(FVector(0.1, 8, 2));
 		HitBox->SetWorldLocation(HitBoxLocation);
 		
 		}break;
@@ -97,10 +98,10 @@ void ADamageHitBox::VisualizeHitbox()
 		HitBox->SetWorldLocation(HitBoxLocation);
 	}break;
 	}
-	DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Purple, true, 2, 0, 5);
+	//DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Purple, true, 2, 0, 5);
 	if (IfCollides())
 	{
-		DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
+		//DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
 		DamageColor = HitBox->CreateDynamicMaterialInstance(0);
 				if (DamageColor != nullptr)
 				{
