@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "PlayerHud.generated.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "CharacterWidget.h"
+#include "PlayerHud.generated.h"
 
 /**
  * 

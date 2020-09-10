@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "CharacterWidget.generated.h"
 #include "MainCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "CharacterWidget.generated.h"
 
 /**
  * 
@@ -22,7 +22,7 @@ public:
 
 	void UpdateHealthPoints(int32 Value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget));
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))//;
 	class UTextBlock* TXTHP;
 	
 };
