@@ -5,9 +5,13 @@
 #include "Components/BoxComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "BaseCharacter.h"
+#include "MainCharacter.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/Engine.h"
+#include "VainCrystal.h"
+#include "Kismet/GameplayStatics.h"
 #include "ConstructorHelpers.h"
+
 
 // Sets default values
 ADamageHitBox::ADamageHitBox()
@@ -124,8 +128,20 @@ bool ADamageHitBox::IfCollides()
 		//For every enemy in the array that it overlaps, it will deal damage by calling the onhurt function
 		for (auto enemy : Enemy)
 		{
-			Cast<ABaseCharacter> (enemy)->OnHurt(Damage);
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors And deals: %f"), Damage));
+			ABaseCharacter* Object = Cast<ABaseCharacter>(enemy);
+			if (Object) 
+			{
+				Object->OnHurt(Damage);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors And deals: %f"), Damage));
+			}
+			AVainCrystal* Crystal = Cast<AVainCrystal>(enemy);
+			if (Crystal)
+			{
+				Crystal->OnHurt(Damage);
+				AMainCharacter* const TemporaryCharacter = Cast<AMainCharacter> (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+				TemporaryCharacter->HurtCrystal(Damage);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected Crystal And deals: %f"), Damage));
+			}
 			
 		}
 	}

@@ -33,6 +33,7 @@ AMainCharacter::AMainCharacter()
 
 	//Character Switching Variables
 	CharacterID = 1;//0 = Demon, 1 = Knight, 2 = Angel
+	CrystalHealth = 10000;
 
 	Speed = 1.0f;
 	Health = 200;
@@ -224,6 +225,11 @@ void AMainCharacter::SetCharacterStats() {
 	}
 
 	
+}
+
+void AMainCharacter::HurtCrystal(float Delta)
+{
+	CrystalHealth -= Delta;
 }
 
 
