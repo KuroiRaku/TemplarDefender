@@ -107,10 +107,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ZZZ", meta = (DisplayName = "CharacterID"))
 	int CharacterID;
 
+	//for UI... the real health still at VainCrystal
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "ZZZ", meta = (DisplayName = "CrystalHealth"))
+	float CrystalHealth;
 	
+
 	bool IsRunning = false;
 
-	
 
 	void OnDeath();
 
@@ -118,6 +121,7 @@ public:
 	void SetCharacterStats();
 
 	
+	void HurtCrystal(float Delta);
 
 
 public:
@@ -148,6 +152,8 @@ public:
 	void SpawnHitBox(EHitBoxType HitBoxType);
 	void DestroyHitBox();
 	void StopAttacking();
+
+	void ShowMenu();
 
 	void PitchCamera(float AxisValue);
 	void YawCamera(float AxisValue);

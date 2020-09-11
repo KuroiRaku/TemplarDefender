@@ -3,6 +3,7 @@
 
 #include "MainCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "GameFramework/PlayerController.h"
 #include "Math/Rotator.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -16,6 +17,7 @@
 #include "PaperSpriteComponent.h"
 #include "Math/Rotator.h"
 #include "PaperFlipbookComponent.h"
+#include "MenuHud.h"
 
 AMainCharacter::AMainCharacter()
 
@@ -31,6 +33,7 @@ AMainCharacter::AMainCharacter()
 
 	//Character Switching Variables
 	CharacterID = 1;//0 = Demon, 1 = Knight, 2 = Angel
+	CrystalHealth = 10000;
 
 	Speed = 1.0f;
 	Health = 200;
@@ -224,6 +227,11 @@ void AMainCharacter::SetCharacterStats() {
 	
 }
 
+void AMainCharacter::HurtCrystal(float Delta)
+{
+	CrystalHealth -= Delta;
+}
+
 
 
 
@@ -382,6 +390,14 @@ void AMainCharacter::StopAttacking()
 	IsAttacking = false;
 }
 
+void AMainCharacter::ShowMenu()
+{
+	if (AMenuHud* MenuHud = Cast<AMenuHud>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
+	{
+		MenuHud->ShowMenu();
+	}
+}
+
 void AMainCharacter::PitchCamera(float AxisValue)
 {
 	CameraInput.Y = AxisValue;
@@ -423,6 +439,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Switch", IE_Pressed, this, &AMainCharacter::OnDeath);
 	
 
+	//Show menu
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &AMainCharacter::ShowMenu);
 
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainCharacter::MoveForward);
