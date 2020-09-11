@@ -149,6 +149,8 @@ public:
 	void DestroyHitBox();
 	void StopAttacking();
 
+	void ShowMenu();
+
 	void PitchCamera(float AxisValue);
 	void YawCamera(float AxisValue);
 	void ZoomIn();

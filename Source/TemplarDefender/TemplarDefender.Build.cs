@@ -9,5 +9,7 @@ public class TemplarDefender : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Paper2D", "UMG", "Slate", "SlateCore", "HeadMountedDisplay" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate" , "SlateCore"});
 	}
 }

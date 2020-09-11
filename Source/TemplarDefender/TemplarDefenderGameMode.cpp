@@ -2,6 +2,7 @@
 
 #include "TemplarDefenderGameMode.h"
 #include "MainCharacterKnight.h"
+#include "MenuHud.h"
 #include "UObject/ConstructorHelpers.h"
 
 ATemplarDefenderGameMode::ATemplarDefenderGameMode()
@@ -9,5 +10,6 @@ ATemplarDefenderGameMode::ATemplarDefenderGameMode()
 	// set default pawn class to our Blueprinted character
 	DefaultPawnClass = AMainCharacter::StaticClass();
 	
+	HUDClass = AMenuHud::StaticClass();
 	
 }
