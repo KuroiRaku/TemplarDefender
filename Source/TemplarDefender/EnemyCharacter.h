@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 #include "DamageHitBox.h"
+#include "AIController.h"
+#include "Waypoint.h"
 #include "EnemyCharacter.generated.h"
 
 /**
@@ -23,6 +25,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int EnemyType;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool SeenPlayer;
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<class ADamageHitBox> DamageHitBoxes;
 
@@ -31,6 +37,18 @@ public:
 	UPROPERTY(EditAnywhere)
 	class ADamageHitBox* DamageBox;
 
+	UPROPERTY(EditAnywhere)
+	TArray<AWaypoint*> WayPoints;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPawnSensingComponent* PawnSensing;
+
+	UFUNCTION()
+	void OnPawnSeen(APawn* SeenPawn);
+	
+	
+	
 	UFUNCTION(BlueprintCallable, Category = "ZZZ", meta = (DisplayName = "Attack Event"))
 	void Attack();
 
@@ -43,6 +61,8 @@ public:
 	void DestroyHitBox();
 
 	void DestroyActor();
+
+	void MoveToLocation(FVector Location);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
