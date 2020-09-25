@@ -20,7 +20,7 @@ ADamageHitBox::ADamageHitBox()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
-	HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBox"));
+	HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DamageBox"));
 	RootComponent = HitBox;
 	/*HitBox->SetupAttachment(RootComponent);*/
 	HitBox->SetHiddenInGame(false);
@@ -74,6 +74,7 @@ void ADamageHitBox::Initialize(float Damage, FVector Location, EHitBoxType HitBo
 
 void ADamageHitBox::VisualizeHitbox()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Visualize Hitbox called")));
 	HitBox->SetMaterial(0, HitColor);
 	/*HitBoxLocation.Y += 200.f;*/
 	switch (HitBoxType)
@@ -99,7 +100,7 @@ void ADamageHitBox::VisualizeHitbox()
 		}break;
 	default:
 	{
-		HitBox->SetWorldScale3D(FVector(0.5, 1, 1));
+		HitBox->SetWorldScale3D(FVector(3, 5, 1));
 		HitBox->SetWorldLocation(HitBoxLocation);
 	}break;
 	}

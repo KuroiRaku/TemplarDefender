@@ -19,6 +19,7 @@
 #include "VainCrystal.h"
 #include "AIController.h"
 #include "MainCharacter.h"
+#include "Components/ChildActorComponent.h"
 //AI
 #include "Perception/PawnSensingComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,11 +53,23 @@ AEnemyCharacter::AEnemyCharacter()
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("Pawn Sensing"));
 	PawnSensing->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnPawnSeen);
 
-	DamageBox = CreateDefaultSubobject<ADamageHitBox>(TEXT("Damage HitBox"));
-	DamageBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+	ChildActorBox = ObjectInitializer.CreateDefaultSubobject<UChildActorComponent>(this, TEXT("ChildActorBox"));
+	ChildActorBox->SetChildActorClass(ADamageHitBox::StaticClass());
+	ChildActorBox->SetupAttachment(Enemy);
+	ChildActorBox->CreateChildActor();
+	ChildActorBox->SetVisibility(true);
+	
 
-	DamageBox->HitBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapBegin);
-	DamageBox->HitBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
+	EnemyInteractionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Interaction Box"));
+	EnemyInteractionBox->SetHiddenInGame(false);
+	EnemyInteractionBox->SetupAttachment(RootComponent);
+	EnemyInteractionBox->SetGenerateOverlapEvents(true);
+	EnemyInteractionBox->SetCollisionProfileName("OverlapAll");
+	
+	
+	DamageBox = Cast<ADamageHitBox> (ChildActorBox->GetChildActor());
+	
+	GetCharacterMovement()->MaxWalkSpeed  = 200.f;
 	
 
 	//this method is to find allactors in the world to find the VainCrystal, but it is unoptimized...
@@ -115,25 +128,45 @@ void AEnemyCharacter::Attack()
 
 
 	
-	SpawnHitBox(20, EHitBoxType::HB_DEMON);
+	//SpawnHitBox(20, EHitBoxType::HB_DEMON);
 	
 	
 	//OnAttack maybe can call in collision boxes etc
 	
 	Enemy->SetFlipbook(EnemyAttack);
-	DamageBox->IsDamaging = true;
+	ADamageHitBox* Temp = Cast<ADamageHitBox>(ChildActorBox->GetChildActor());
+
+	if (Temp) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Cast Success ");
+		Temp->IsDamaging = true;
+		Temp->Initialize(Damage, GetActorLocation(), EHitBoxType::HB_ENEMY1);
+		Temp->VisualizeHitbox();
+		
+	}
+	
 
 	//First perimiter is using the timer, second 
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AEnemyCharacter::StopDamaging, 0.3f, false);
-	Enemy->SetFlipbook(EnemyRunning);
-	IsAttacking = false;
+	
 	
 	
 	
 	
 }
 
+void AEnemyCharacter::StopDamaging()
+{
+	ADamageHitBox* Temp = Cast<ADamageHitBox>(ChildActorBox->GetChildActor());
 
+	if (Temp) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Cast Success: Stop Damaging ");
+		Temp->IsDamaging = false;
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Stop Damaging :D ");
+	Enemy->SetFlipbook(EnemyRunning);
+	IsAttacking = false;
+
+}
 
 void AEnemyCharacter::SpawnHitBox(float Damage, EHitBoxType HitBoxType)
 {
@@ -170,12 +203,7 @@ void AEnemyCharacter::OnDeath()
 	
 }
 
-void AEnemyCharacter::StopDamaging()
-{
-	DamageBox->IsDamaging = false;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Stop Damaging :D ");
 
-}
 
 void AEnemyCharacter::DestroyActor()
 {
@@ -199,7 +227,7 @@ void AEnemyCharacter::MoveToLocation(FVector Location)
 		else {
 			AddMovementInput(FVector(-1.0f, 1.0f, 0.0f), 1.0f);
 		}
-		SetActorRotation(FRotator(0.f, -180.f, 0.f));
+		SetActorRotation(FRotator(0.f, 0.f, 0.f));
 
 	}
 	else {
@@ -213,7 +241,7 @@ void AEnemyCharacter::MoveToLocation(FVector Location)
 		else {
 			AddMovementInput(FVector(-1.0f, -1.0f, 0.0f), 1.0f);
 		}
-		SetActorRotation(FRotator(0.f, 0.f, 0.f));
+		SetActorRotation(FRotator(0.f, -180.f, 0.f));
 	}
 }
 
@@ -240,8 +268,14 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 }
 
-void AEnemyCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemyCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep, const FHitResult& SweepResult)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Enemy Box overlaps ")));
+
 	// check if Actors do not equal nullptr
 	//ABaseCharacter TestObject = Cast<ABaseCharacter>(OtherActor);
 	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
@@ -251,21 +285,30 @@ void AEnemyCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		GetWorld()->GetTimerManager().SetTimer(AttackingTimer, this, &AEnemyCharacter::Attack, 0.5f, true);
 		
 
-		Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
+		//Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
 		//DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
 		
 	}
 
 }
 
-void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AEnemyCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("we ended ")));
-		DamageBox->IsDamaging = false;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("we ended ")));
+		Cast<ADamageHitBox>(ChildActorBox->GetChildActor())->IsDamaging = false;
 	}
 	Enemy->SetFlipbook(EnemyRunning);
 
 	GetWorldTimerManager().ClearTimer(AttackingTimer);
+}
+void AEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	EnemyInteractionBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapBegin);
+	EnemyInteractionBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
+	//this doesn't work :(
+	
 }

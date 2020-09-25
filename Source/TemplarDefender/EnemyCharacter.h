@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	TSubclassOf<class ADamageHitBox> DamageHitBoxes;
+	
+	UPROPERTY(VisibleDefaultsOnly)
+	UChildActorComponent* ChildActorBox;
 
 	//this pointer will get a reference on runtime after being spawn in. 
 	//The spawn actor function will assign pointer of the object that it spawned to this
@@ -91,12 +94,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 	class UPaperFlipbook* EnemyAttack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* EnemyInteractionBox;
+
+	UFUNCTION()
 	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ReactionTimeToAttack;
 
 	FTimerHandle AttackingTimer;
+
+	virtual void BeginPlay() override;
 };

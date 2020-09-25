@@ -120,7 +120,6 @@ void AMainCharacter::Tick(float DeltaTime)
 	if (IsDead)
 	{
 		OnDeath();
-		//UpdateAnimator();
 	}
 
 
@@ -161,6 +160,10 @@ void AMainCharacter::Tick(float DeltaTime)
 
 void AMainCharacter::OnDeath() {
 	FTimerHandle UnusedHandle;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("OnDeath")));
+	//because we keep checking the health on tick aka every frames. Is better to just reset temporarily here so it won't keep calling on death
+	Health = 100;
+	IsDead = false;
 	CharacterID -= 1;
 
 	//resets the CharacterID
@@ -169,8 +172,8 @@ void AMainCharacter::OnDeath() {
 
 	SetAnimatorOnDeath();
 	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::SetCharacterStats, 1.0f, false);
-	//SetCharacterStats();
-	IsDead = false;
+	
+	
 	//Health = 100;
 }
 
@@ -344,7 +347,7 @@ void AMainCharacter::Attack()
 	UpdateAnimator();
 	IsAttacking = false;
 
-	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::DestroyHitBox, 1.f, false);
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AMainCharacter::DestroyHitBox, 0.3f, false);
 	
 	
 	
@@ -369,9 +372,10 @@ void AMainCharacter::SpawnHitBox(EHitBoxType HitBoxType)
 
 	}
 	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(), SpawnParameters);
+	DamageBox->IsDamaging = true;
 	DamageBox->Initialize(Damage, Result, HitBoxType);
 	DamageBox->VisualizeHitbox();
-	DamageBox->IsDamaging = true;
+	
 	//HitboxesArray.Add(HitBox);
 
 

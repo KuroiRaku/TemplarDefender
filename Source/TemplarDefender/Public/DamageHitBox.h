@@ -16,7 +16,7 @@ enum class EHitBoxType
 	HB_ENEMY2
 };
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TEMPLARDEFENDER_API ADamageHitBox : public AActor
 {
 	GENERATED_BODY()
