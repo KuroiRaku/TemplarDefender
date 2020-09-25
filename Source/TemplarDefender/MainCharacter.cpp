@@ -371,6 +371,7 @@ void AMainCharacter::SpawnHitBox(EHitBoxType HitBoxType)
 	DamageBox = GetWorld()->SpawnActor<ADamageHitBox>(Result, GetActorRotation(), SpawnParameters);
 	DamageBox->Initialize(Damage, Result, HitBoxType);
 	DamageBox->VisualizeHitbox();
+	DamageBox->IsDamaging = true;
 	//HitboxesArray.Add(HitBox);
 
 
@@ -378,6 +379,7 @@ void AMainCharacter::SpawnHitBox(EHitBoxType HitBoxType)
 
 void AMainCharacter::DestroyHitBox()
 {
+	
 	if (DamageBox->Destroy()) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Damageboxes! ");
 	};

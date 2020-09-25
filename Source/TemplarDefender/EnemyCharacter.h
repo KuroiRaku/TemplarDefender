@@ -58,7 +58,7 @@ public:
 
 
 	//sadly i need these functions so we are compatible with setTimer functions... 
-	void DestroyHitBox();
+	void StopDamaging();
 
 	void DestroyActor();
 
@@ -80,6 +80,9 @@ public:
 
 	//idle animation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
+	class UPaperFlipbook* EnemyIdle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 	class UPaperFlipbook* EnemyRunning;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
@@ -87,4 +90,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy", meta = (AllowPrivateAccess = "true"))
 	class UPaperFlipbook* EnemyAttack;
+
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ReactionTimeToAttack;
+
+	FTimerHandle AttackingTimer;
 };

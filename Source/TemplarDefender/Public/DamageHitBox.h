@@ -21,20 +21,7 @@ class TEMPLARDEFENDER_API ADamageHitBox : public AActor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* HitBox;
-
-	//the colour of the boxes where it shows where it going to hit
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UMaterialInstanceDynamic* HitColor;
-
-	//the colour of the boxes where it actually damage the enemies
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UMaterialInstanceDynamic* DamageColor;
-
-	//Default Colour, kinda useless for now
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
-	class UMaterialInterface* Color;
+	
 
 	/*UPROPERTY(VisibleAnywhere)
 	class UMaterial* StoredMaterial;*/
@@ -43,6 +30,21 @@ class TEMPLARDEFENDER_API ADamageHitBox : public AActor
 
 
 public:	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* HitBox;
+
+	//the colour of the boxes where it shows where it going to hit
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
+		class UMaterialInstanceDynamic* HitColor;
+
+	//the colour of the boxes where it actually damage the enemies
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
+		class UMaterialInstanceDynamic* DamageColor;
+
+	//Default Colour, kinda useless for now
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HitBoxes", meta = (AllowPrivateAccess = "true"))
+		class UMaterialInterface* Color;
+
 	// Sets default values for this actor's properties
 	ADamageHitBox();
 
@@ -54,6 +56,8 @@ public:
 
 
 	bool IfCollides();
+
+	bool IsDamaging;
 
 	FVector HitBoxLocation;
 

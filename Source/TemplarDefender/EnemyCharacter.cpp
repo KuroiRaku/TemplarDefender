@@ -51,6 +51,12 @@ AEnemyCharacter::AEnemyCharacter()
 	//AI
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("Pawn Sensing"));
 	PawnSensing->OnSeePawn.AddDynamic(this, &AEnemyCharacter::OnPawnSeen);
+
+	DamageBox = CreateDefaultSubobject<ADamageHitBox>(TEXT("Damage HitBox"));
+	DamageBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_None);
+
+	DamageBox->HitBox->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapBegin);
+	DamageBox->HitBox->OnComponentEndOverlap.AddDynamic(this, &AEnemyCharacter::OnOverlapEnd);
 	
 
 	//this method is to find allactors in the world to find the VainCrystal, but it is unoptimized...
@@ -83,11 +89,20 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::OnPawnSeen(APawn* SeenPawn)
 {
 	AMainCharacter* Player = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	if (Cast <AVainCrystal> (SeenPawn))
+	{
+		FVector CrystalLocation = SeenPawn->GetActorLocation();
+
+		MoveToLocation(CrystalLocation);
+	}
 	if (Player==Cast<AMainCharacter>(SeenPawn))
 	{
 		FVector PlayerLocation = Player->GetActorLocation();
 		MoveToLocation(PlayerLocation);
 	};
+
+	
 	
 	
 }
@@ -106,9 +121,10 @@ void AEnemyCharacter::Attack()
 	//OnAttack maybe can call in collision boxes etc
 	
 	Enemy->SetFlipbook(EnemyAttack);
+	DamageBox->IsDamaging = true;
 
 	//First perimiter is using the timer, second 
-	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AEnemyCharacter::DestroyHitBox, 0.5f, false);
+	GetWorld()->GetTimerManager().SetTimer(UnusedHandle, this, &AEnemyCharacter::StopDamaging, 0.3f, false);
 	Enemy->SetFlipbook(EnemyRunning);
 	IsAttacking = false;
 	
@@ -154,11 +170,11 @@ void AEnemyCharacter::OnDeath()
 	
 }
 
-void AEnemyCharacter::DestroyHitBox()
+void AEnemyCharacter::StopDamaging()
 {
-	if (DamageBox->Destroy()) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed Damageboxes! ");
-	};
+	DamageBox->IsDamaging = false;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Stop Damaging :D ");
+
 }
 
 void AEnemyCharacter::DestroyActor()
@@ -207,7 +223,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	if (!SeenPlayer) {
 
-		if (WayPoints.Num()<=0) {
+		if (WayPoints.Num()>0) {
 			for (AWaypoint* WayPoint : WayPoints)
 			{
 				FVector Location = WayPoint->GetActorLocation();
@@ -222,4 +238,34 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		}
 	}
 
+}
+
+void AEnemyCharacter::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// check if Actors do not equal nullptr
+	//ABaseCharacter TestObject = Cast<ABaseCharacter>(OtherActor);
+	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Enemy InteractionBoxes Detected other actors ")));
+		
+		GetWorld()->GetTimerManager().SetTimer(AttackingTimer, this, &AEnemyCharacter::Attack, 0.5f, true);
+		
+
+		Cast<ABaseCharacter>(OtherActor)->OnHurt(Damage);
+		//DrawDebugBox(GetWorld(), HitBoxLocation, GetComponentsBoundingBox().GetExtent(), FColor::Red, true, 2, 0, 5);
+		
+	}
+
+}
+
+void AEnemyCharacter::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor && (OtherActor != this) && Cast<ABaseCharacter>(OtherActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("we ended ")));
+		DamageBox->IsDamaging = false;
+	}
+	Enemy->SetFlipbook(EnemyRunning);
+
+	GetWorldTimerManager().ClearTimer(AttackingTimer);
 }

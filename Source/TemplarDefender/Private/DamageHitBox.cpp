@@ -21,7 +21,8 @@ ADamageHitBox::ADamageHitBox()
 	PrimaryActorTick.bCanEverTick = false;
 	
 	HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HitBox"));
-	HitBox->SetupAttachment(RootComponent);
+	RootComponent = HitBox;
+	/*HitBox->SetupAttachment(RootComponent);*/
 	HitBox->SetHiddenInGame(false);
 	
 	HitBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
@@ -79,26 +80,26 @@ void ADamageHitBox::VisualizeHitbox()
 	{
 	case EHitBoxType::HB_ANGEL:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 8, 2));
+		HitBox->SetWorldScale3D(FVector(0.5, 8, 2));
 		HitBox->SetWorldLocation(HitBoxLocation);
 		
 		}break;
 	case EHitBoxType::HB_KNIGHT:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 3, 4));
+		HitBox->SetWorldScale3D(FVector(0.5, 3, 4));
 		HitBox->SetWorldLocation(HitBoxLocation);
 
 		}break;
 	case EHitBoxType::HB_DEMON:
 		{
-		HitBox->SetWorldScale3D(FVector(0.1, 3, 1));
+		HitBox->SetWorldScale3D(FVector(0.5, 3, 1));
 		HitBox->SetWorldLocation(HitBoxLocation);
 
 
 		}break;
 	default:
 	{
-		HitBox->SetWorldScale3D(FVector(0.1, 1, 1));
+		HitBox->SetWorldScale3D(FVector(0.5, 1, 1));
 		HitBox->SetWorldLocation(HitBoxLocation);
 	}break;
 	}
@@ -126,23 +127,25 @@ bool ADamageHitBox::IfCollides()
 	}
 	else {
 		//For every enemy in the array that it overlaps, it will deal damage by calling the onhurt function
-		for (auto enemy : Enemy)
-		{
-			ABaseCharacter* Object = Cast<ABaseCharacter>(enemy);
-			if (Object) 
+		if (IsDamaging) {
+			for (auto enemy : Enemy)
 			{
-				Object->OnHurt(Damage);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors And deals: %f"), Damage));
+				ABaseCharacter* Object = Cast<ABaseCharacter>(enemy);
+				if (Object)
+				{
+					Object->OnHurt(Damage);
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected other actors And deals: %f"), Damage));
+				}
+				AVainCrystal* Crystal = Cast<AVainCrystal>(enemy);
+				if (Crystal)
+				{
+					Crystal->OnHurt(Damage);
+					AMainCharacter* const TemporaryCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+					TemporaryCharacter->HurtCrystal(Damage);
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected Crystal And deals: %f"), Damage));
+				}
+
 			}
-			AVainCrystal* Crystal = Cast<AVainCrystal>(enemy);
-			if (Crystal)
-			{
-				Crystal->OnHurt(Damage);
-				AMainCharacter* const TemporaryCharacter = Cast<AMainCharacter> (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-				TemporaryCharacter->HurtCrystal(Damage);
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DamageHitBoxes Detected Crystal And deals: %f"), Damage));
-			}
-			
 		}
 	}
 	
